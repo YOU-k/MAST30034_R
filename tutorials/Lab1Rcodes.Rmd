@@ -1,0 +1,226 @@
+---
+title: "Lab1 tutorial"
+date: "`r Sys.Date()`"
+author: Yue You
+output:
+  rmdformats::html_clean:
+    self_contained: true
+    thumbnails: true
+    lightbox: true
+    gallery: false
+    highlight: tango
+---
+
+## Applied Data Science (MAST30034)
+### Welcome
+Welcome to Applied Data Science for 2021 Semester 2!
+
+This is a capstone project subject, hence, expectations are higher than most other subjects that you will take in your undergraduate course. It is expected that students have already completed assessments to a satisfactory level for the following subjects:
+
+Elements of Data Processing (COMP20008)
+Statistics (MAST20005)
+Machine Leaarning (COMP30027)
+Linear Statistical Models (MAST30025)
+If you are unfamiliar with GitHub, it is in your best interest to revise how to use it or attend a consultation / revision workshop to learn.
+
+### Teaching Team
+Your teaching staff will be as follows:
+
+Lecturer: Dr. Karim Seghouane (Assignment 1)
+Subject Coordinator: Akira Wang (Project 1 and 2)
+Tutor: Yue You (TBA)
+### Tutorial Structure
+Tutorials are broken into Python and R streams to support students in whichever language they prefer.
+The first hour of the tutorial will be based on general programming how-to's and walkthroughs.
+The remainder of the tutorial will generally follow a consultation / free-for-all style. That is, we can cover a topic of request out of the Advanced Tutorials module, answer project related questions, or ask questions about industry / applying for jobs.
+You are free to attend any tutorial time, either half (or the full 2 hours) of the tutorial depending on your interests. You are all classified as experienced university veterans so do what works for you.
+Finally, tutorial attendence is not marked for the duration of Project 1 and Assignment 1, but there is an expectation that you attend tutorials with your group for Project 2.
+
+
+## Lab 1 Overview
+### First Half
+Using the R server:
+
+Using GitHub Desktop vs Git CLI (Command Line Interface):
+
+Create a repository for your Project 1, push a commit, and ensure your repository accepts the changes.
+
+Project 1 Tips:
+How to get started and what to look out for.
+Getting started on Latex with Overleaf.
+
+### Second Half
+Revision:
+
+Variable names, magic numbers, and constants.
+Docstrings and comments.
+Plotting geospatial maps the correct way.
+Jupyter Notebook Magic Cells.
+Data Serialisation.
+Downloading files using urllib.
+Advanced (Optional):
+
+(Windows 10 Users) Installing WSL2 (Ubuntu 20.04) for a clean environment.
+Introduction to Apache Spark 3.0
+
+## General Tips for R markdown
+
+### Using git on the VM
+https://mast30034.science.unimelb.edu.au/
+
+#### Cloning:
+Open a terminal (yes it is commandline git for this to work).
+git clone HTTPS (where HTTPS is the https url to your gitlab repo).
+Enter your credentials.
+Done.
+
+#### Pushing:
+Change directories to inside your repository (cd NAME_OF_REPO_FOLDER).
+git add . (this will add all files in the current directory to a commit - you can specify specific files if you would like instead).
+git commit -m "message" (make a commit with a message).
+git push
+Enter your credentials.
+Done.
+
+### Readable Code
+We will be assessing the quality of your code and how you present it in your notebooks.
+This is because there is no point writing code that cannot be easily interpreted. At the end of the day, clients are paying for your analysis, but also the corresponding code.
+If your code is confusing or difficult to read, there is little chance your client will come back to you.
+
+#### Variable Names
+As long as you are consistent, then it is fine. For example, commit to either using:
+
+Snake Case: words are seperated by underscores such as variable_name
+Camel Case: words are seperated by captials such as variableName
+Your variables should be contextual and describe the code. That is, try to name your variables to be understandable without comments.
+
+
+#### Comments and Docstrings (w.r.t JupyterNotebook Cells)
+Cells in Jupyter Notebook should aim to do one "block of logic" at a time (i.e importing libraries, defining functions, filtering rows, etc).
+
+If it takes a reader more than a few seconds to understand your cell, you need comments.
+Your functions need to have docstrings describing what they do.
+
+## Let's start!
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Install t-map package (Library for thematic maps) and other required R packages
+```{r}
+#install.packages("dplyr")
+#install.packages("sf")
+#install.packages("curl")
+#Restart your R Session
+#install.packages("tmap")
+```
+
+Install ggmap
+```{r}
+#install.packages("ggmap")
+
+#OR (choose whichever works on your computer)
+
+#install.packages("devtools")
+#devtools::install_github("dkahle/ggmap")
+```
+
+
+Load libraries
+```{r, message=FALSE, warning=FALSE}
+library(dplyr)
+library(sf)
+library(curl)
+library(ggmap)
+library(tmap)
+library(tmaptools)
+```
+
+### Read in the data
+
+```{r}
+df = read.csv("/Volumes/you.y/MAST30034_R/data/sample.csv",stringsAsFactors = TRUE)
+head(df)
+```
+
+Check the dimensions of the dataset.
+
+```{r}
+dim(df)
+```
+
+
+```{r}
+colnames(df)
+```
+
+```{r}
+typeof(df)
+```
+
+```{r}
+str(df)
+```
+
+
+
+
+```{r}
+summary(df[,c('pickup_latitude', 'pickup_longitude')])
+```
+```{r}
+which(is.na(df['pickup_longitude']))
+```
+
+```{r}
+summary(df[,c('pickup_latitude', 'pickup_longitude')])[c(2,5),]
+```
+
+### Filtering and variable selection
+
+```{r}
+head(df %>% 
+  filter(VendorID == 1) %>% 
+  select(trip_distance, pickup_longitude,pickup_latitude))
+```
+```{r}
+head(df %>% 
+  filter(VendorID == 1 & passenger_count > 0) %>% 
+  select(trip_distance, pickup_longitude,pickup_latitude))
+```
+
+```{r}
+df %>% 
+  filter(VendorID == 2 & passenger_count > 100) %>% 
+  select(trip_distance, pickup_longitude,pickup_latitude)
+```
+
+
+### Download and view map
+
+```{r, message=FALSE,warning=FALSE,fig.height = 8, fig.width = 6, fig.align = "center"}
+map<-get_stamenmap(rbind(as.numeric(paste(geocode_OSM("Manhattan")$bbox))), zoom = 11)
+ggmap(map)
+```
+
+For your Project 1, we will be working with NYC. Here's one method of setting it up.
+
+```{r}
+range(df %>% select(pickup_longitude) %>% filter(!pickup_longitude==0)) -> xranges
+range(df %>% select(pickup_latitude) %>% filter(!pickup_latitude==0)) -> yranges
+xranges
+yranges
+```
+
+
+Plot pickup locations
+```{r, message=FALSE,warning=FALSE,fig.height = 8, fig.width = 6, fig.align = "center"}
+ggmap(map) + 
+  geom_point(data = df,
+             aes(x = pickup_longitude, y = pickup_latitude),
+             colour="white", size = 0.01,alpha = .5)
+```
+
+
+
