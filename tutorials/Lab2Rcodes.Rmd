@@ -1,0 +1,206 @@
+---
+title: "Lab1 tutorial"
+date: "`r Sys.Date()`"
+author: Yue You
+output:
+  rmdformats::html_clean:
+    self_contained: true
+    thumbnails: true
+    lightbox: true
+    gallery: false
+    highlight: tango
+---
+
+
+## Lab 2 Overview
+
+### First Half
+
+More Visualisations:
+
+* Map Clusters
+
+* Heatmaps (GIS)
+
+* HexBins vs SquareBins
+
+* Choropleths
+
+Descriptive Statistics:
+
+* Histograms and looking at the distribution shape.
+
+* How to "quick plot" dataframes.
+
+* Some methods of determining bin sizes.
+
+### Second Half
+
+Revision:
+
+* Any code related questions for R
+
+## Let's get started
+
+### Visualisations
+
+* Clustering points
+
+* Binned plots
+
+* Good visualizations vs Bad visualizastions
+
+### Personal Checklist for Visualisations and Dashboards:
+
+* Your visualisation needs to tell a story.
+
+* It should be intepretable without being overly verbose.
+
+* The scale and axis need to make sense (and you can assume the reader knows the difference between a normal scale vs log scale).
+
+* The choice of visualisation needs to make sense:
+1. Line plot vs Bar chart with non-numerical categories
+2. Map plot with points vs clusters for each location
+3. Scatterplot vs Histogram plot to see distribution
+4. etc
+
+* Choice of colour scheme / alpha / size need to be easy on the eyes.
+
+At the end of the day, even if you think your visualisation is "pretty" or "beautiful", if a reader cannot understand it, then it is not a good visualisation.
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+Load libraries
+```{r, message=FALSE, warning=FALSE}
+library(dplyr)
+library(sf)
+library(curl)
+library(ggmap)
+library(tmap)
+library(tmaptools)
+library(feather)
+```
+
+Load data
+```{r}
+#try feather 
+filepath = "/Volumes/you.y/MAST30034_R/data/df.feather"
+df <- read_feather(filepath)
+df %>% tail
+```
+### Heatmaps
+
+* Excellent tool when visualising geospatial coordinates
+* Allows for a more continuous interpretation of the map, rather than clusters.
+
+
+Select the map.
+
+```{r, message=FALSE,warning=FALSE,fig.height = 8, fig.width = 6, fig.align = "center"}
+xranges <- range(df$pickup_longitude[!df$pickup_longitude==0])
+yranges <- range(df$pickup_latitude[!df$pickup_latitude==0])
+xranges
+yranges
+```
+
+
+```{r, message=FALSE,warning=FALSE,fig.height = 8, fig.width = 15, fig.align = "center"}
+map_big <- get_stamenmap(
+  rbind(xranges[1]+1,yranges[1]+2.5,xranges[2]-1,yranges[2]-1), 
+  zoom = 8)
+ggmap(map_big)
+```
+
+Plot pickup locations
+
+```{r, message=FALSE, warning=FALSE}
+ggmap(map_big) + 
+  geom_bin2d(data = df,
+             aes(x = pickup_longitude,
+                 y = pickup_latitude),
+             bins=50) 
+```
+
+Change the color scale.
+
+```{r, message=FALSE, warning=FALSE}
+ggmap(map_big) + 
+  geom_bin2d(data = df,
+             aes(x = pickup_longitude,
+                 y = pickup_latitude),
+             bins=50) +
+  scale_fill_viridis_c(trans = "log10")
+```
+
+
+```{r, message=FALSE, warning=FALSE}
+ggmap(map_big) + 
+  geom_bin2d(data = df,
+             aes(x = pickup_longitude,
+                 y = pickup_latitude),
+             bins=50) +
+  scale_fill_gradientn(colours = c("darkred", "orange", "yellow", "white"),trans="log10")
+```
+
+Plot HexBin
+```{r, message=FALSE, warning=FALSE}
+ggmap(map) + 
+  geom_hex(data=df,
+           aes(x = pickup_longitude, y = pickup_latitude),
+               bins=100) +
+  coord_cartesian()  +
+  scale_fill_gradient2(trans="log10")
+```
+
+
+```{r}
+library(RColorBrewer)
+display.brewer.all()
+```
+
+
+
+
+
+
+Load Data into SparklyR
+```{r, message=FALSE, warning=FALSE}
+library(sparklyr)
+library(dplyr)
+sc <- spark_connect(master = "local")
+nyc_taxi <- spark_read_csv(sc, name = "taxi_data", path ="sample.csv", header = TRUE, delimiter = ",")
+```
+
+Manual square binning by rounding
+```{r, message=FALSE, warning=FALSE}
+nyc_taxi <- nyc_taxi %>%
+mutate(pickup_latitude = round(pickup_latitude,3))%>%
+mutate(pickup_longitude = round(pickup_longitude,3))%>%
+sdf_register("nyc_taxi")
+```
+
+Saving data
+```{r, message=FALSE, warning=FALSE}
+spark_write_csv(nyc_taxi,"rounded",header=TRUE,delimiter=",", mode="overwrite")
+```
+
+Calling data summary and saving
+```{r, message=FALSE, warning=FALSE}
+nyc_taxi_summary <- nyc_taxi %>%
+group_by(pickup_latitude, pickup_longitude) %>%
+summarise(n=n()) %>%
+sdf_register("nyc_taxi_summary")
+#save summary
+spark_write_csv(nyc_taxi_summary,"summary",header=TRUE,delimiter=",", mode="overwrite")
+```
+
+Saving summary
+```{r, message=FALSE, warning=FALSE}
+plotmap <- ggmap(map) + geom_point(aes(x = pickup_longitude, y = pickup_latitude, colour=n, fill=n), data = nyc_taxi_summary, shape=22, size=0.25)
+ggsave("plot.png")
+```
+

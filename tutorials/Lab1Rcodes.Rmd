@@ -16,32 +16,31 @@ output:
 Welcome to Applied Data Science for 2021 Semester 2!
 
 This is a capstone project subject, hence, expectations are higher than most other subjects that you will take in your undergraduate course. It is expected that students have already completed assessments to a satisfactory level for the following subjects:
-
-Elements of Data Processing (COMP20008)
-Statistics (MAST20005)
-Machine Leaarning (COMP30027)
-Linear Statistical Models (MAST30025)
+* Elements of Data Processing (COMP20008)
+* Statistics (MAST20005)
+* Machine Leaarning (COMP30027)
+* Linear Statistical Models (MAST30025)
 If you are unfamiliar with GitHub, it is in your best interest to revise how to use it or attend a consultation / revision workshop to learn.
 
 ### Teaching Team
 Your teaching staff will be as follows:
 
-Lecturer: Dr. Karim Seghouane (Assignment 1)
+* Lecturer: Dr. Karim Seghouane (Assignment 1)
 
-Subject Coordinator: Akira Wang (Project 1 and 2)
+* Subject Coordinator: Akira Wang (Project 1 and 2)
 
-Tutor: Yue You
+* Tutor: Yue You
 
 ### Tutorial Structure
-Tutorials are broken into Python and R streams to support students in whichever language they prefer.
+* Tutorials are broken into Python and R streams to support students in whichever language they prefer.
 
-The first hour of the tutorial will be based on general programming how-to's and walkthroughs.
+* The first hour of the tutorial will be based on general programming how-to's and walkthroughs.
 
-The remainder of the tutorial will generally follow a consultation / free-for-all style. That is, we can cover a topic of request out of the Advanced Tutorials module, answer project related questions, or ask questions about industry / applying for jobs.
+* The remainder of the tutorial will generally follow a consultation / free-for-all style. That is, we can cover a topic of request out of the Advanced Tutorials module, answer project related questions, or ask questions about industry / applying for jobs.
 
-You are free to attend any tutorial time, either half (or the full 2 hours) of the tutorial depending on your interests. You are all classified as experienced university veterans so do what works for you.
+* You are free to attend any tutorial time, either half (or the full 2 hours) of the tutorial depending on your interests. You are all classified as experienced university veterans so do what works for you.
 
-Finally, tutorial attendence is not marked for the duration of Project 1 and Assignment 1, but there is an expectation that you attend tutorials with your group for Project 2.
+* Finally, tutorial attendence is not marked for the duration of Project 1 and Assignment 1, but there is an expectation that you attend tutorials with your group for Project 2.
 
 
 ## Lab 1 Overview
@@ -51,65 +50,71 @@ Using the Rstudio (JupyterHub) server:
 
 Using GitHub Desktop vs Git CLI (Command Line Interface):
 
-Create a repository for your Project 1, push a commit, and ensure your repository accepts the changes.
+* Create a repository for your Project 1, push a commit, and ensure your repository accepts the changes.
 
 Project 1 Tips:
-How to get started and what to look out for.
-Getting started on Latex with Overleaf.
+* How to get started and what to look out for.
+* Getting started on Latex with Overleaf.
 
 ### Second Half
 Revision:
 
-Variable names and types. (Comments)
+* Variable names and types. (Comments)
 
-Pipe operator.
+* Pipe operator.
 
-dplyr verbs in action.
+* dplyr verbs in action.
 
-Plotting geospatial maps the correct way.
+* Plotting geospatial maps the correct way.
 
-Downloading files using urllib.
+* Downloading files using urllib.
 
 
 ## General Tips for R markdown
+
+On mac:
+
+* Ctrl + option + i : Insert code chunk {r}
+* Cmd + Shift + c : Comment out lines #
+* shift + enter : Run current cell (equivalent of pressing )
 
 ### Using git on the VM
 https://mast30034.science.unimelb.edu.au/
 
 #### Cloning:
-Open a terminal (yes it is commandline git for this to work).
+* Open a terminal (yes it is commandline git for this to work).
 
-git clone HTTPS (where HTTPS is the https url to your gitlab repo).
+* git clone HTTPS (where HTTPS is the https url to your gitlab repo).
 
-Enter your credentials.
+* Enter your credentials.
 
-Done.
+* Done.
 
 #### Pushing:
-Change directories to inside your repository (cd NAME_OF_REPO_FOLDER).
+* Change directories to inside your repository (cd NAME_OF_REPO_FOLDER).
 
-git add . (this will add all files in the current directory to a commit - you can specify specific files if you would like instead).
+* git add . (this will add all files in the current directory to a commit - you can specify specific files if you would like instead).
 
-git commit -m "message" (make a commit with a message).
-git push
+* git commit -m "message" (make a commit with a message).
+* git push
 
 Enter your credentials.
 
 Done.
 
 ### Readable Code
-We will be assessing the quality of your code and how you present it in your notebooks.
+* We will be assessing the quality of your code and how you present it in your notebooks.
 
-This is because there is no point writing code that cannot be easily interpreted. At the end of the day, clients are paying for your analysis, but also the corresponding code.
+* This is because there is no point writing code that cannot be easily interpreted. At the end of the day, clients are paying for your analysis, but also the corresponding code.
 
-If your code is confusing or difficult to read, there is little chance your client will come back to you.
+* If your code is confusing or difficult to read, there is little chance your client will come back to you.
 
 #### Variable Names
 As long as you are consistent, then it is fine. For example, commit to either using:
 
-Snake Case: words are seperated by underscores such as variable_name
+* Snake Case: words are seperated by underscores such as variable_name
 
-Camel Case: words are seperated by captials such as variableName
+* Camel Case: words are seperated by captials such as variableName
 
 Your variables should be contextual and describe the code. That is, try to name your variables to be understandable without comments.
 
@@ -117,9 +122,9 @@ Your variables should be contextual and describe the code. That is, try to name 
 #### Comments and Docstrings (w.r.t JupyterNotebook Cells) (TBA)
 Cells in Jupyter Notebook should aim to do one "block of logic" at a time (i.e importing libraries, defining functions, filtering rows, etc).
 
-If it takes a reader more than a few seconds to understand your cell, you need comments.
+* If it takes a reader more than a few seconds to understand your cell, you need comments.
 
-Your functions need to have docstrings describing what they do.
+* Your functions need to have docstrings describing what they do.
 
 ## Let's get started!
 
@@ -203,6 +208,8 @@ summary(df[,c('pickup_latitude', 'pickup_longitude')])[c(2,5),]
 ### Pipe operator.
 
 Pipe operator: %>%. This operator allows you to pipe the output from one function to the input of another function. Instead of nesting functions (reading from the inside to the outside), the idea of of piping is to read the functions from left to right.
+
+* Cmd + Shift + m :  Insert pipe operator %>%
 
 Example:
 
@@ -317,7 +324,7 @@ yranges
 
 ```{r, message=FALSE,warning=FALSE,fig.height = 8, fig.width = 15, fig.align = "center"}
 map_big <- get_stamenmap(
-  rbind(xranges[1]+1,yranges[1]+3,xranges[2]-1,yranges[2]-1), 
+  rbind(xranges[1]+1,yranges[1]+2.5,xranges[2]-1,yranges[2]-1), 
   zoom = 8)
 ggmap(map_big)
 ```
@@ -362,19 +369,19 @@ ggmap(map_big) +
 
 ### Geospatial Inferences
 
-More pickups around central Manhattan, with more dropoffs in the surrounding bouroughs.
+* More pickups around central Manhattan, with more dropoffs in the surrounding bouroughs.
 
-Pickup location are easily divided into "hubs" (i.e Manhattan, Aiport, etc).
+* Pickup location are easily divided into "hubs" (i.e Manhattan, Aiport, etc).
 
-Dropoffs seem to be scattered across the map.
+* Dropoffs seem to be scattered across the map.
 
 #### IMPORTANT: The above is at most describing the plot. Your project will require analysis and research on top of describing a plot. That is:
 
-Why might there be more pickups around central Manhattan?
+* Why might there be more pickups around central Manhattan?
 
-Is there an explanation surrounding the "hubs"?
+* Is there an explanation surrounding the "hubs"?
 
-Why are dropoffs scattered across the map?
+* Why are dropoffs scattered across the map?
 
 As a suggestion, have less description and more analysis. Your visualisation should ensure that it can be easily interpreted and visible (i.e suitable font size, colour, alpha, legend, etc.)
 
@@ -382,7 +389,7 @@ As a suggestion, have less description and more analysis. Your visualisation sho
 
 We have a simple visualisation on the pickups and dropoffs, but how might they be affected?
 
-Perhaps we can take a look at the time, day of week, the weather conditions, events that are taking place, etc.
+* Perhaps we can take a look at the time, day of week, the weather conditions, events that are taking place, etc.
 It is up to you to find an external dataset to answer these questions.
 
 
@@ -391,11 +398,11 @@ It is up to you to find an external dataset to answer these questions.
 
 Feather:
 
-Lightweight and super fast serialization for data using Apache Arrow.
+* Lightweight and super fast serialization for data using Apache Arrow.
 
-Python and R native, though not compatible with all data formats.
+* Python and R native, though not compatible with all data formats.
 
-Medium space, Low time.
+* Medium space, Low time.
 
 ```{r}
 #install.packages("feather")
