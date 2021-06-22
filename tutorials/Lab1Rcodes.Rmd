@@ -27,19 +27,27 @@ If you are unfamiliar with GitHub, it is in your best interest to revise how to 
 Your teaching staff will be as follows:
 
 Lecturer: Dr. Karim Seghouane (Assignment 1)
+
 Subject Coordinator: Akira Wang (Project 1 and 2)
-Tutor: Yue You (TBA)
+
+Tutor: Yue You
+
 ### Tutorial Structure
 Tutorials are broken into Python and R streams to support students in whichever language they prefer.
+
 The first hour of the tutorial will be based on general programming how-to's and walkthroughs.
+
 The remainder of the tutorial will generally follow a consultation / free-for-all style. That is, we can cover a topic of request out of the Advanced Tutorials module, answer project related questions, or ask questions about industry / applying for jobs.
+
 You are free to attend any tutorial time, either half (or the full 2 hours) of the tutorial depending on your interests. You are all classified as experienced university veterans so do what works for you.
+
 Finally, tutorial attendence is not marked for the duration of Project 1 and Assignment 1, but there is an expectation that you attend tutorials with your group for Project 2.
 
 
 ## Lab 1 Overview
 ### First Half
-Using the R server:
+Using the Rstudio (JupyterHub) server:
+(TBA)
 
 Using GitHub Desktop vs Git CLI (Command Line Interface):
 
@@ -52,16 +60,16 @@ Getting started on Latex with Overleaf.
 ### Second Half
 Revision:
 
-Variable names, magic numbers, and constants.
-Docstrings and comments.
-Plotting geospatial maps the correct way.
-Jupyter Notebook Magic Cells.
-Data Serialisation.
-Downloading files using urllib.
-Advanced (Optional):
+Variable names and types. (Comments)
 
-(Windows 10 Users) Installing WSL2 (Ubuntu 20.04) for a clean environment.
-Introduction to Apache Spark 3.0
+Pipe operator.
+
+dplyr verbs in action.
+
+Plotting geospatial maps the correct way.
+
+Downloading files using urllib.
+
 
 ## General Tips for R markdown
 
@@ -70,44 +78,57 @@ https://mast30034.science.unimelb.edu.au/
 
 #### Cloning:
 Open a terminal (yes it is commandline git for this to work).
+
 git clone HTTPS (where HTTPS is the https url to your gitlab repo).
+
 Enter your credentials.
+
 Done.
 
 #### Pushing:
 Change directories to inside your repository (cd NAME_OF_REPO_FOLDER).
+
 git add . (this will add all files in the current directory to a commit - you can specify specific files if you would like instead).
+
 git commit -m "message" (make a commit with a message).
 git push
+
 Enter your credentials.
+
 Done.
 
 ### Readable Code
 We will be assessing the quality of your code and how you present it in your notebooks.
+
 This is because there is no point writing code that cannot be easily interpreted. At the end of the day, clients are paying for your analysis, but also the corresponding code.
+
 If your code is confusing or difficult to read, there is little chance your client will come back to you.
 
 #### Variable Names
 As long as you are consistent, then it is fine. For example, commit to either using:
 
 Snake Case: words are seperated by underscores such as variable_name
+
 Camel Case: words are seperated by captials such as variableName
+
 Your variables should be contextual and describe the code. That is, try to name your variables to be understandable without comments.
 
 
-#### Comments and Docstrings (w.r.t JupyterNotebook Cells)
+#### Comments and Docstrings (w.r.t JupyterNotebook Cells) (TBA)
 Cells in Jupyter Notebook should aim to do one "block of logic" at a time (i.e importing libraries, defining functions, filtering rows, etc).
 
 If it takes a reader more than a few seconds to understand your cell, you need comments.
+
 Your functions need to have docstrings describing what they do.
 
-## Let's start!
+## Let's get started!
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
 Install t-map package (Library for thematic maps) and other required R packages
+
 ```{r}
 #install.packages("dplyr")
 #install.packages("sf")
@@ -128,6 +149,7 @@ Install ggmap
 
 
 Load libraries
+
 ```{r, message=FALSE, warning=FALSE}
 library(dplyr)
 library(sf)
@@ -144,9 +166,12 @@ df = read.csv("/Volumes/you.y/MAST30034_R/data/sample.csv",stringsAsFactors = TR
 head(df)
 ```
 
+### Variable names and types. (Comments)
+
 Check the dimensions of the dataset.
 
 ```{r}
+#get the dimension
 dim(df)
 ```
 
@@ -164,8 +189,6 @@ str(df)
 ```
 
 
-
-
 ```{r}
 summary(df[,c('pickup_latitude', 'pickup_longitude')])
 ```
@@ -177,17 +200,41 @@ which(is.na(df['pickup_longitude']))
 summary(df[,c('pickup_latitude', 'pickup_longitude')])[c(2,5),]
 ```
 
-### Filtering and variable selection
+### Pipe operator.
+
+Pipe operator: %>%. This operator allows you to pipe the output from one function to the input of another function. Instead of nesting functions (reading from the inside to the outside), the idea of of piping is to read the functions from left to right.
+
+Example:
 
 ```{r}
-head(df %>% 
+head(select(df, VendorID, trip_distance))
+```
+Now in this case, we will pipe the msleep data frame to the function that will select two columns and then pipe the new data frame to the function head() which will return the head of the new data frame.
+
+```{r}
+df %>% 
+  select(VendorID, trip_distance) %>% 
+  head
+```
+
+### dplyr verbs in action.
+
+#### Filtering and variable selection.
+
+Select a set of columns. 
+Filter the rows with specified conditions.
+
+```{r}
+df %>% 
   filter(VendorID == 1) %>% 
-  select(trip_distance, pickup_longitude,pickup_latitude))
+  select(trip_distance, pickup_longitude,pickup_latitude) %>% 
+  head
 ```
 ```{r}
-head(df %>% 
+df %>% 
   filter(VendorID == 1 & passenger_count > 0) %>% 
-  select(trip_distance, pickup_longitude,pickup_latitude))
+  select(trip_distance, pickup_longitude,pickup_latitude) %>% 
+  head
 ```
 
 ```{r}
@@ -197,30 +244,198 @@ df %>%
 ```
 
 
+#### Arrange or re-order rows.
+
+```{r}
+df %>% 
+  select(VendorID, passenger_count, trip_distance) %>% 
+  arrange(passenger_count, trip_distance, VendorID) %>% 
+  head
+```
+
+#### Create new columns.
+
+```{r}
+df %>% 
+  mutate(pickup_posi = paste0("(",pickup_longitude,",",pickup_latitude,")")) %>% 
+  select(pickup_posi) %>% 
+  head
+```
+
+#### Create summaries of the data frame.
+
+```{r}
+df %>% 
+  summarise (avg_longi = mean(pickup_longitude),
+             avg_lati = mean(pickup_latitude)) 
+```
+
+
+#### Group operations.
+
+```{r}
+df %>% 
+  group_by(VendorID) %>% 
+  summarise (avg_longi = mean(pickup_longitude),
+             avg_lati = mean(pickup_latitude)) 
+```
+
 ### Download and view map
 
-```{r, message=FALSE,warning=FALSE,fig.height = 8, fig.width = 6, fig.align = "center"}
+#### ggmap
+
+The basic idea driving ggmap is to take a downloaded map image, plot it as a context layer using
+ggplot2, and then plot additional content layers of data, statistics, or models on top of the map. In
+ggmap this process is broken into two pieces – (1) downloading the images and formatting them
+for plotting, done with get_map, and (2) making the plot, done with ggmap. 
+
+The get_stamenmap() function reqiures a bounding box, i.e the top, bottom, left and right latitude/longitude of the map you want to plot. For example, the latitude/longitude for US map are as follows:
+
+
+```{r, message=FALSE,warning=FALSE,fig.height = 15, fig.width =30, fig.align = "center"}
+bbox <- c(bottom = 25.75, top = 49 , right = -67, left = -125)
+usmap <- get_stamenmap(bbox = bbox, zoom = 6, maptype = 'toner-lite') 
+ggmap(usmap)
+```
+
+
+The geocode_OSM() geocodes a location (based on a search query) to coordinates and a bounding box. Similar to geocode from the ggmap package. It uses OpenStreetMap Nominatim. 
+
+
+```{r, message=FALSE,warning=FALSE,fig.height = 10, fig.width =8, fig.align = "center"}
 map<-get_stamenmap(rbind(as.numeric(paste(geocode_OSM("Manhattan")$bbox))), zoom = 11)
 ggmap(map)
 ```
 
-For your Project 1, we will be working with NYC. Here's one method of setting it up.
-
-```{r}
-range(df %>% select(pickup_longitude) %>% filter(!pickup_longitude==0)) -> xranges
-range(df %>% select(pickup_latitude) %>% filter(!pickup_latitude==0)) -> yranges
+```{r, message=FALSE,warning=FALSE,fig.height = 8, fig.width = 6, fig.align = "center"}
+xranges <- range(df$pickup_longitude[!df$pickup_longitude==0])
+yranges <- range(df$pickup_latitude[!df$pickup_latitude==0])
 xranges
 yranges
 ```
 
 
-Plot pickup locations
-```{r, message=FALSE,warning=FALSE,fig.height = 8, fig.width = 6, fig.align = "center"}
-ggmap(map) + 
-  geom_point(data = df,
-             aes(x = pickup_longitude, y = pickup_latitude),
-             colour="white", size = 0.01,alpha = .5)
+```{r, message=FALSE,warning=FALSE,fig.height = 8, fig.width = 15, fig.align = "center"}
+map_big <- get_stamenmap(
+  rbind(xranges[1]+1,yranges[1]+3,xranges[2]-1,yranges[2]-1), 
+  zoom = 8)
+ggmap(map_big)
 ```
 
 
+A lot of map tiles that you can use. 
+
+Now, let's try plottibf somethings over the map!
+
+Plot pickup locations.
+
+```{r, message=FALSE,warning=FALSE,fig.height = 8, fig.width = 15, fig.align = "center"}
+ggmap(map_big) + 
+  geom_point(data = df,
+             aes(x = pickup_longitude,
+                 y = pickup_latitude),
+             colour="blue", size =2)
+```
+
+The equivalent for dropoffs.
+
+```{r, message=FALSE,warning=FALSE,fig.height = 8, fig.width = 15, fig.align = "center"}
+ggmap(map_big) + 
+  geom_point(data = df,
+             aes(x = dropoff_longitude,
+                 y = dropoff_latitude),
+             colour="red", size = 2)
+```
+
+
+```{r, message=FALSE,warning=FALSE,fig.height = 8, fig.width = 15, fig.align = "center"}
+ggmap(map_big) + 
+  geom_point(data = df,
+             aes(x = dropoff_longitude,
+                 y = dropoff_latitude),
+             colour="red", size = 0.05) +
+  geom_point(data = df,
+             aes(x = pickup_longitude,
+                 y = pickup_latitude),
+             colour="blue", size = 0.05) 
+```
+
+### Geospatial Inferences
+
+More pickups around central Manhattan, with more dropoffs in the surrounding bouroughs.
+
+Pickup location are easily divided into "hubs" (i.e Manhattan, Aiport, etc).
+
+Dropoffs seem to be scattered across the map.
+
+#### IMPORTANT: The above is at most describing the plot. Your project will require analysis and research on top of describing a plot. That is:
+
+Why might there be more pickups around central Manhattan?
+
+Is there an explanation surrounding the "hubs"?
+
+Why are dropoffs scattered across the map?
+
+As a suggestion, have less description and more analysis. Your visualisation should ensure that it can be easily interpreted and visible (i.e suitable font size, colour, alpha, legend, etc.)
+
+### Where to go from here
+
+We have a simple visualisation on the pickups and dropoffs, but how might they be affected?
+
+Perhaps we can take a look at the time, day of week, the weather conditions, events that are taking place, etc.
+It is up to you to find an external dataset to answer these questions.
+
+
+
+### Data Serialisation
+
+Feather:
+
+Lightweight and super fast serialization for data using Apache Arrow.
+
+Python and R native, though not compatible with all data formats.
+
+Medium space, Low time.
+
+```{r}
+#install.packages("feather")
+```
+
+```{r}
+library(feather)
+filepath <- "/Volumes/you.y/MAST30034_R/data/"
+```
+
+
+```{r}
+start.time <- Sys.time()
+write_feather(df, paste0(filepath,"df.feather"))
+end.time <- Sys.time()
+round((end.time - start.time), 3)
+```
+
+
+
+```{r}
+start.time <- Sys.time()
+write.csv(df, paste0(filepath,"df.csv"))
+end.time <- Sys.time()
+round((end.time - start.time), 3)
+```
+
+Read in.
+
+```{r}
+df <- read_feather(paste0(filepath,"df.feather"))
+```
+
+
+
+### Downloading files
+
+```{r}
+URL <- "https://github.com/YOU-k/MAST30034_R/tree/main/data/sample.csv"
+destfile ="/Volumes/you.y/MAST30034_R/data/download.csv"
+download.file(URL, destfile)
+```
 
