@@ -53,13 +53,15 @@ Using GitHub Desktop vs Git CLI (Command Line Interface):
 * Create a repository for your Project 1, push a commit, and ensure your repository accepts the changes.
 
 Project 1 Tips:
+
 * How to get started and what to look out for.
+
 * Getting started on Latex with Overleaf.
 
 ### Second Half
 Revision:
 
-* Variable names and types. (Comments)
+* Variable names and types. 
 
 * Pipe operator.
 
@@ -82,6 +84,7 @@ On mac:
 https://mast30034.science.unimelb.edu.au/
 
 #### Cloning:
+
 * Open a terminal (yes it is commandline git for this to work).
 
 * git clone HTTPS (where HTTPS is the https url to your gitlab repo).
@@ -91,6 +94,7 @@ https://mast30034.science.unimelb.edu.au/
 * Done.
 
 #### Pushing:
+
 * Change directories to inside your repository (cd NAME_OF_REPO_FOLDER).
 
 * git add . (this will add all files in the current directory to a commit - you can specify specific files if you would like instead).
@@ -332,7 +336,7 @@ ggmap(map_big)
 
 A lot of map tiles that you can use. 
 
-Now, let's try plottibf somethings over the map!
+Now, let's try plot somethings over the map!
 
 Plot pickup locations.
 
