@@ -1,0 +1,64 @@
+---
+title: "sparklyr"
+date: "`r Sys.Date()`"
+author: Yue You
+output:
+  rmdformats::html_clean:
+    self_contained: true
+    thumbnails: true
+    lightbox: true
+    gallery: false
+    highlight: tango
+---
+
+
+
+Load Data into SparklyR
+```{r, message=FALSE, warning=FALSE}
+library(sparklyr)
+library(dplyr)
+sc <- spark_connect(master = "local")
+nyc_taxi <- spark_read_csv(sc, name = "taxi_data", path ="sample.csv", header = TRUE, delimiter = ",")
+```
+
+Manual square binning by rounding
+```{r, message=FALSE, warning=FALSE}
+nyc_taxi <- nyc_taxi %>%
+  mutate(pickup_latitude = round(pickup_latitude,3))%>%
+  mutate(pickup_longitude = round(pickup_longitude,3))%>%
+  sdf_register("nyc_taxi")
+```
+
+Saving data
+```{r, message=FALSE, warning=FALSE}
+spark_write_csv(nyc_taxi,"rounded",header=TRUE,delimiter=",", mode="overwrite")
+```
+
+Calling data summary and saving
+```{r, message=FALSE, warning=FALSE}
+nyc_taxi_summary <- nyc_taxi %>%
+  group_by(pickup_latitude, pickup_longitude) %>%
+  summarise(n=n()) %>%
+  sdf_register("nyc_taxi_summary")
+#save summary
+spark_write_csv(nyc_taxi_summary,"summary",header=TRUE,delimiter=",", mode="overwrite")
+```
+
+Saving summary
+```{r, message=FALSE, warning=FALSE}
+plotmap <- ggmap(map) + geom_point(aes(x = pickup_longitude, y = pickup_latitude, colour=n, fill=n), data = nyc_taxi_summary, shape=22, size=0.25)
+ggsave("plot.png")
+```
+
+
+
+Big data setting
+```{r}
+nyc_taxi <- spark_read_csv(sc, name = "taxi_data", path ="yellow_tripdata_2015-12.csv", header = TRUE)
+lm_model <- nyc_taxi %>%
+  ml_linear_regression(total_amount ~ tip_amount + passenger_count)
+ #Standard errors
+lm_model$summary$coefficient_standard_errors()
+#pvalues
+lm_model$summary$p_values()
+```

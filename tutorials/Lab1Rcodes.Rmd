@@ -287,8 +287,8 @@ df %>%
 ```{r}
 df %>% 
   group_by(VendorID) %>% 
-  summarise (avg_longi = mean(pickup_longitude),
-             avg_lati = mean(pickup_latitude)) 
+  summarise(avg_longi = mean(pickup_longitude),
+            avg_lati = mean(pickup_latitude)) 
 ```
 
 ### Download and view map
