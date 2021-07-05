@@ -11,54 +11,62 @@ output:
     highlight: tango
 ---
 
+Spark needs to be installed first.
+[Mac simple tutorial.](https://notadatascientist.com/install-spark-on-macos/)
 
 
-Load Data into SparklyR
+### Load Data into SparklyR.
+
 ```{r, message=FALSE, warning=FALSE}
 library(sparklyr)
 library(dplyr)
 sc <- spark_connect(master = "local")
-nyc_taxi <- spark_read_csv(sc, name = "taxi_data", path ="sample.csv", header = TRUE, delimiter = ",")
+nyc_taxi <- spark_read_csv(sc, 
+                           name = "taxi_data",
+                           path ="/stornext/Home/data/allstaff/y/you.y/MAST30034_R/data/sample.csv", 
+                           header = TRUE, delimiter = ",")
 ```
-
-Manual square binning by rounding
-```{r, message=FALSE, warning=FALSE}
-nyc_taxi <- nyc_taxi %>%
-  mutate(pickup_latitude = round(pickup_latitude,3))%>%
-  mutate(pickup_longitude = round(pickup_longitude,3))%>%
-  sdf_register("nyc_taxi")
-```
-
-Saving data
-```{r, message=FALSE, warning=FALSE}
-spark_write_csv(nyc_taxi,"rounded",header=TRUE,delimiter=",", mode="overwrite")
-```
-
-Calling data summary and saving
-```{r, message=FALSE, warning=FALSE}
-nyc_taxi_summary <- nyc_taxi %>%
-  group_by(pickup_latitude, pickup_longitude) %>%
-  summarise(n=n()) %>%
-  sdf_register("nyc_taxi_summary")
-#save summary
-spark_write_csv(nyc_taxi_summary,"summary",header=TRUE,delimiter=",", mode="overwrite")
-```
-
-Saving summary
-```{r, message=FALSE, warning=FALSE}
-plotmap <- ggmap(map) + geom_point(aes(x = pickup_longitude, y = pickup_latitude, colour=n, fill=n), data = nyc_taxi_summary, shape=22, size=0.25)
-ggsave("plot.png")
-```
-
-
-
-Big data setting
 ```{r}
-nyc_taxi <- spark_read_csv(sc, name = "taxi_data", path ="yellow_tripdata_2015-12.csv", header = TRUE)
-lm_model <- nyc_taxi %>%
-  ml_linear_regression(total_amount ~ tip_amount + passenger_count)
- #Standard errors
-lm_model$summary$coefficient_standard_errors()
-#pvalues
-lm_model$summary$p_values()
+src_tbls(sc)
 ```
+
+### dplyr manipulations.
+
+collect() retrieves data into a local tibble.
+
+```{r, message=FALSE, warning=FALSE}
+passenger_summary <- nyc_taxi %>%
+  group_by(passenger_count) %>% 
+  summarise(count = n(), fare = mean(fare_amount), dist = mean(trip_distance)) %>% 
+  filter(count > 200) %>% 
+  collect
+```
+
+```{r, message=FALSE, warning=FALSE}
+library(ggplot2)
+ggplot(passenger_summary) +
+  geom_point(aes(x=fare,y=dist,col=log(count),size=passenger_count)) +
+  theme_bw()
+```
+
+### Machine Learning
+
+You can orchestrate machine learning algorithms in a Spark cluster via the machine learning functions within sparklyr. These functions connect to a set of high-level APIs built on top of DataFrames that help you create and tune machine learning workflows.
+
+Here’s an example where we use ml_linear_regression to fit a linear regression model.
+
+
+```{r}
+fit <- nyc_taxi %>%
+  ml_linear_regression(total_amount ~ tip_amount + passenger_count)
+```
+
+For linear regression models produced by Spark, we can use summary() to learn a bit more about the quality of our fit, and the statistical significance of each of our predictors.
+
+```{r}
+summary(fit)
+```
+
+
+
+
