@@ -1,0 +1,343 @@
+---
+title: "Lab3 tutorial"
+date: "`r Sys.Date()`"
+author: Yue You
+output:
+  rmdformats::html_clean:
+    self_contained: true
+    thumbnails: true
+    lightbox: true
+    gallery: false
+    highlight: tango
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Lab 3 Overview
+
+### First Half
+
+More Visualisations:
+
+* Linear Regression.
+
+* Evaluation Metrics.
+
+* Penalized Regression (LASSO and Ridge).
+
+* Generalised Linear Models (GLM).
+
+* Discussion.
+
+### Second Half
+
+Revision:
+
+* Any code related questions for R
+
+### Let's get started
+
+### Rregression in R
+
+* Linear Regression.
+
+* General Linear Models (more covered in MAST30027).
+
+* LASSO and Ridge Regression.
+
+* Non-parametric models as alternatives.
+
+Load data
+```{r}
+library(feather)
+library(tidyverse)
+filepath = "/Volumes/you.y/MAST30034_R/data/df.feather"
+df <- read_feather(filepath)
+df %>% tail
+```
+
+
+As an example, let's try to predict total_amount using fare_amount, tip_amount, toll_amount, trip_distance, VendorID as predictors.
+
+Some things to take note:
+
+* tip_amount is only valid for payment_type == 1 (card)
+* VendorID is categorical, with only two possible values (1 or 2) so we should make it boolean
+
+
+```{r}
+# filter dataframe
+col_filter <- c('total_amount', 'fare_amount', 'tip_amount', 'tolls_amount', 'trip_distance', 'VendorID')
+df %>% 
+  filter(payment_type == "1") %>% 
+  select(col_filter) -> df_filtered
+  
+
+# boolean VendorID
+df_filtered['VendorID'] <- df_filtered['VendorID'] == 1 
+tail(df_filtered)
+```
+
+* We are looking for linear relationships between our chosen response total_amount.
+* Now I'm not sure what kind of life you've lived, but I'm fairly certain that we can infer that total_amount will have a positive linear relationship with fare_amount. Let's see a quick plot...
+
+```{r}
+ggplot(df_filtered) + 
+  geom_point(aes(x=fare_amount,
+                 y=total_amount)) +
+  theme_bw()
+```
+
+Well, obviously this looks like an overall positive linear relationship.
+
+* How might we statistically test this?
+
+We would do something like this for (Ordinary) Least Squares:
+
+```{r}
+fit <- lm(total_amount ~ fare_amount + tip_amount + tolls_amount + trip_distance + VendorID, 
+          data=df_filtered)
+summary(fit)
+```
+
+Questions:
+
+* Is this model good?
+
+1. The $R^2$ value is 0.999 which is insanely large. As a rule of thumb, large $R^2$ values indicate a good fit.
+
+2. Perhaps too good of a fit...
+
+
+* How might we improve this model
+
+1. we can do some feature engineering (run a decision tree and look at the splits)
+
+
+### Penalized Regression
+
+* LASSO (l1) and Ridge (l2) Regression
+
+Revise in your own time if you've forgotten (this was covered in MAST30025):
+
+* Lecture 4 (variable selection)
+
+* LSM topic 5 (ch05_handout) slide 141/141
+
+Things you might have forgotten when working with penalized models:
+
+* Always good to standardize your data prior to train and test. Most models perform poorly if not standardized prior.
+
+* Do not fit your standardizer to test, only to train. You should transform both your train and test though.
+
+
+
+### LASSO ($\ell_1$)
+
+Quick overview:
+
+* LASSO may cause coefficients to be set to 0 by constraining the model.
+
+* This is because we put a constraint where the sum of the absolute values of the coefficients must be less than some fixed value.
+
+* As such, some coefficients may end up having 0 which is the same as dropping the attribute from the model.
+
+* In this sense, it's quite similar to feature selection as you end up with a model that is much more simpler.
+
+* However, LASSO does not do well when the feature space is small as you may end up with an over-simplified model, as well as cases where all the featuers are significant or when coefficients are extremely large.
+
+Solution:
+
+* Requires an iterative method to solve $(\mathbf{y}-X\beta)^T(\mathbf{y}-X\beta) + \lambda I \beta$
+
+
+### Ridge ($\ell_2$)
+
+Quick overview:
+
+* Also know as the MAP (Maximum a posteriori) estimation.
+
+* Aims to lower the scale of the coefficients to avoid overfitting, but does not result in coefficients being 0.
+
+* In contraast to LASSO, we put a constrain using the sum of squares that must be lest than a fixed value.
+
+* As you might guess, this means we still have several features making it less interpretable than LASSO.
+
+* However, Ridge Regression performs best in cases where there may be high multi-colinearity (i.e dependencies between attributes) or high linear correlation between certain attributes,
+
+* This is because it reduces variance in exchange for some more bias (consider variance-bias tradeoff).
+
+* You must also ensure that we have more observations than attributes (n > p) as this penalty method does not drop features, leading to worse predictions.
+
+Solution:
+
+* Closed-form which can be found by minimising $(\mathbf{y}-X\beta)^T(\mathbf{y}-X\beta) + \lambda I \beta^T\beta$
+
+
+
+glmnet is a R package which can be used to fit generalized linear model via penalized maximum likelihood. Alpha argument determines what type of model is fit. When alpha=0, Ridge Model is fit and if alpha=1, a lasso model is fit.
+
+
+```{r}
+library(glmnet)
+```
+```{r}
+ycols="total_amount"
+xcols=c('fare_amount', 'tip_amount', 'tolls_amount', 'trip_distance', 'VendorID')
+```
+
+
+
+```{r}
+ridge_reg <- glmnet(x = as.matrix(df_filtered[,xcols]),
+                    y = as.matrix(df_filtered[,ycols]),
+                    nlambda = 25, alpha = 0, 
+                    family = 'gaussian',
+                    standardize = TRUE)
+summary(ridge_reg)
+```
+
+Does k-fold cross-validation for glmnet. (k is 10 at default)
+
+```{r}
+cv_ridge <- cv.glmnet(x = as.matrix(df_filtered[,xcols]),
+                      y = as.matrix(df_filtered[,ycols]),
+                      alpha = 0,
+                      standardize = TRUE)
+plot(cv_ridge)
+optimal_lambda <- cv_ridge$lambda.min
+optimal_lambda
+```
+
+Best lambda value for Ridge: 1.239259
+$\lambda$ is computed by using cross validation (iterative approach).
+
+What about our coefficients?
+
+```{r}
+coef(cv_ridge)
+```
+Next, let's try lasso regression.
+
+```{r}
+lasso_reg <- cv.glmnet(x =  as.matrix(df_filtered[,xcols]),
+                       y = as.matrix(df_filtered[,ycols]),
+                       alpha = 1, standardize = TRUE, nfolds = 5)
+
+plot(lasso_reg)
+# Best 
+lambda_best <- lasso_reg$lambda.min 
+lambda_best
+```
+Best lambda value for Lasso: 0.2732729
+$\lambda$ is computed by using cross validation (iterative approach).
+
+What about our coefficients?
+
+```{r}
+coef(lasso_reg)
+```
+We see that the lasso model with $\lambda$ chosen by cross-validation contains only four variables. trip_distance and VendorID have shrunk to 0. 
+
+
+
+### Fitting a GLM (Optional)
+
+* Well, this is exactly what some of you will be learning in MAST30027 right now.
+
+Let's go through an example:
+
+* The passenger_count attribute is discrete and non-negative. If we were to predict it, a linear model will not be sufficient.
+
+* We know that a Poisson distribution takes in non-negative integer values, so we can use the Poisson family of GLMs to model this.
+
+* We will use total_amount, trip_distance, VendorID as our regressors.
+
+For those of you not taking MAST30027 (ELI5):
+
+* GLM's allow us to express relationships in a linear and additive way like normal linear regression.
+
+* However, it might be the case that the underlying true relationship is neither linear nor additive.
+
+* The transformation is done through a link function (in this case, Poisson).
+
+```{r}
+df$VendorID <- df$VendorID==1
+glm_fit <- glm(formula = passenger_count ~ total_amount + trip_distance + VendorID, 
+          data=df, family = poisson(link = "log"))
+```
+
+
+```{r}
+summary(glm_fit)
+```
+* We can see that both total_amount and trip_distance are insignificant.
+
+* Conclude that the total fare amount and trip distance do not really affect the number of passengers in a trip.
+
+
+
+### Discussion
+
+* What is the Bias-Variance tradeoff with respect to linear models:
+
+1. Less parameters = less variance but more bias
+
+2. More parameters = more variaance but less bias
+
+3. The goal depends on the problem, but generalled we want an even variaance and bias (intersection).
+
+* Is using regression on X attribute / specific dataset even a good choice...?
+
+1. The answer is yes, it is a good choice to try
+
+2. BUT also try other methods...
+
+* What are the pros and cons of stepwise regression?
+
+1. Forward Selection (start from nothing and end until significant)
+
+2. Backward Elimination (start with everything and end until no more can be removed)
+
+3. Not always the best results...
+
+* What is best subset regression and the pros and cons of it?
+
+1. A brute-force like method of fitting all posssible regressuibs or all possible models
+
+2. Unlike stepwise, this method fits all possible models based on the variables specified, so you will get the best model possibletest
+
+* What is an assumption we make when we fit linear regression models?
+
+1. Well, the data has to be linearly seperable.
+
+2. Does this also apply to other models too...? (Recall SVM and kernel function which we can use)
+
+3. Perhaps another model might suit the dataset... (Trees, Neural Networks, Clustering, etc...)
+
+* If you were to use a decision tree, how would you compare between two different fits?
+
+1. Look at Gini Impurity (probability of an incorrectly classified instance)
+
+2. How about baselines or other predictive machine learning models?
+ 
+3. Precision, Recall, Classification Accuracy...
+
+#### Feature Engineering?
+
+* We want to see if the the profitability of zones remains consistent with respect to hour of day, day of week and pickup location. The distribution of profitable zones should be similar across all years.
+
+* How is a zone profitable? Frequency of trips? Duration of trips? Best "earners"?
+
+* You could create your own feature and scale it accordingly. Perhaps the expected dollar per minute + possible tolls scaled by the expected frequency of trips might be a good start.
+
+* Just remember that trip frequency $\approx$ taxi demand in a zone (you don't know the number of taxis in a zone at the time)
+
+* Additionally, variable rate fares exist: "50 cents per 1/5 mile when travelling above 12mph OR 50 cents per 60 seconds in slow traffic or when the vehicle is stopped."
+
+* Profit rates might assume crude approximations degrading into linear distance / constant velocity / etc
+
+

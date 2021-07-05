@@ -1,0 +1,75 @@
+---
+title: "Lab3 tutorial"
+date: "2021-07-05"
+author: Yue You
+output:
+  rmdformats::html_clean:
+    self_contained: true
+    thumbnails: true
+    lightbox: true
+    gallery: false
+    highlight: tango
+---
+
+
+
+
+## Lab 3 Overview
+
+### First Half
+
+More Visualisations:
+
+* Linear Regression.
+
+* Evaluation Metrics.
+
+* Penalized Regression (LASSO and Ridge).
+
+* Generalised Linear Models (GLM).
+
+* Discussion.
+
+### Second Half
+
+Revision:
+
+* Any code related questions for R
+
+### Let's get started
+
+### Rregression in R
+
+* Linear Regression.
+
+* General Linear Models (more covered in MAST30027).
+
+* LASSO and Ridge Regression.
+
+* Non-parametric models as alternatives.
+
+Load data
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
