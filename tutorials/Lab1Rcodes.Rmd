@@ -16,10 +16,15 @@ output:
 Welcome to Applied Data Science for 2021 Semester 2!
 
 This is a capstone project subject, hence, expectations are higher than most other subjects that you will take in your undergraduate course. It is expected that students have already completed assessments to a satisfactory level for the following subjects:
+
 * Elements of Data Processing (COMP20008)
+
 * Statistics (MAST20005)
+
 * Machine Leaarning (COMP30027)
+
 * Linear Statistical Models (MAST30025)
+
 If you are unfamiliar with GitHub, it is in your best interest to revise how to use it or attend a consultation / revision workshop to learn.
 
 ### Teaching Team
@@ -450,3 +455,10 @@ destfile ="/Volumes/you.y/MAST30034_R/data/download.csv"
 download.file(URL, destfile)
 ```
 
+
+
+#### SessionInfo
+
+```{r}
+sessionInfo()
+```

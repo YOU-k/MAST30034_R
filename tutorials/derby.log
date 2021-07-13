@@ -1,8 +1,8 @@
 ----------------------------------------------------------------
-Wed Jul 07 16:48:26 AEST 2021:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-017a-7fb9-93d7-00006a90d378 
-on database directory memory:/stornext/Home/data/allstaff/y/you.y/MAST30034_R/tutorials/databaseName=metastore_db with class loader org.apache.spark.sql.hive.client.IsolatedClientLoader$$anon$1@8ddf8e9 
-Loaded from file:/stornext/Home/data/allstaff/y/you.y/spark/spark-2.2.1-bin-hadoop2.7/jars/derby-10.12.1.1.jar
+Tue Jul 13 17:17:38 AEST 2021:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-017a-9eba-75d5-000075411a90 
+on database directory memory:/stornext/Home/data/allstaff/y/you.y/MAST30034_R/tutorials/databaseName=metastore_db with class loader org.apache.spark.sql.hive.client.IsolatedClientLoader$$anon$1@27b76af1 
+Loaded from file:/stornext/Home/data/allstaff/y/you.y/spark/spark-2.3.3-bin-hadoop2.7/jars/derby-10.12.1.1.jar
 java.vendor=Oracle Corporation
 java.runtime.version=1.8.0_262-b10
 user.dir=/stornext/Home/data/allstaff/y/you.y/MAST30034_R/tutorials

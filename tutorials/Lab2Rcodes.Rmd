@@ -147,6 +147,7 @@ ggmap(map_big) +
                  fill = as.factor(passenger_count)),
              bins=50) 
 ```
+
 Change the color palette. A good palette makes your story better.
 
 ```{r message=FALSE, fig.align = "center"}
@@ -478,3 +479,10 @@ ggplot(df) +
 ### Use Spark in R
 
 See sparklyr tutorial.
+
+
+#### SessionInfo
+
+```{r}
+sessionInfo()
+```

@@ -271,6 +271,14 @@ glm_fit <- glm(formula = passenger_count ~ total_amount + trip_distance + Vendor
 ```
 
 
+
+#### SessionInfo
+
+```{r}
+sessionInfo()
+```
+
+
 ```{r}
 summary(glm_fit)
 ```
@@ -341,3 +349,9 @@ summary(glm_fit)
 * Profit rates might assume crude approximations degrading into linear distance / constant velocity / etc
 
 
+
+#### SessionInfo
+
+```{r}
+sessionInfo()
+```

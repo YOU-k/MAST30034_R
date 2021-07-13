@@ -1,0 +1,67 @@
+---
+title: "sparklyr Tutorial"
+date: "`r Sys.Date()`"
+author: Yue You
+output:
+  rmdformats::html_clean:
+    self_contained: true
+    thumbnails: true
+    lightbox: true
+    gallery: false
+    highlight: tango
+---
+
+This tutorial introduces tools and concepts to perform data analysis in Spark from R. Spoiler alert: these are the same tools you use with plain R! This is not a mere coincidence; rather, we want data scientists to live in a world where technology is hidden from them, where you can use the R packages you know and love, and they “just work” in Spark! Now, we are not quite there yet, but we are also not that far. Therefore, in this tutorial you learn widely used R packages and practices to perform data analysis—dplyr, ggplot2, formulas, rmarkdown, and so on—which also happen to work in Spark.
+
+[Book to master Spark with R.](https://therinspark.com/starting.html#overview) 
+
+### dplyr manipulations.
+
+```{r, message=FALSE, warning=FALSE}
+passenger_summary <- taxi_tbl %>%
+  group_by(passenger_count) %>% 
+  summarise(count = n(), fare = mean(fare_amount), dist = mean(trip_distance)) %>% 
+  filter(count > 200) %>% 
+  collect
+```
+
+```{r, message=FALSE, warning=FALSE, fig.width= 6, fig.height= 5}
+library(ggplot2)
+ggplot(passenger_summary) +
+  geom_point(aes(x=fare,y=dist,col=log(count),size=passenger_count)) +
+  theme_bw()
+```
+
+### Machine Learning
+
+You can orchestrate machine learning algorithms in a Spark cluster via the machine learning functions within sparklyr. These functions connect to a set of high-level APIs built on top of DataFrames that help you create and tune machine learning workflows.
+
+Here’s an example where we use ml_linear_regression to fit a linear regression model.
+
+
+```{r}
+fit <- taxi_tbl %>%
+  ml_linear_regression(total_amount ~ tip_amount + passenger_count)
+```
+
+For linear regression models produced by Spark, we can use summary() to learn a bit more about the quality of our fit, and the statistical significance of each of our predictors.
+
+```{r}
+summary(fit)
+```
+
+Here’s a simple example that wraps a Spark text file line counting function with an R function:
+
+```{r}
+# define an R interface to Spark line counting
+count_lines <- function(sc, path) {
+  spark_context(sc) %>%
+    invoke("textFile", path, 1L) %>%
+      invoke("count")
+}
+
+# call spark to count the lines of the CSV
+count_lines(sc, "/stornext/Home/data/allstaff/y/you.y/MAST30034_R/data/sample.csv")
+```
+
+

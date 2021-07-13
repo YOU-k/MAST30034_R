@@ -1,5 +1,5 @@
 ---
-title: "sparklyr"
+title: "sparklyr installation"
 date: "`r Sys.Date()`"
 author: Yue You
 output:
@@ -11,87 +11,176 @@ output:
     highlight: tango
 ---
 
-Spark needs to be installed first.
-[Mac simple tutorial.](https://notadatascientist.com/install-spark-on-macos/)
+If you needed to sort large amounts of data, there was no other system in the world faster than Spark.
+
+Officially, sparklyr is an R interface for Apache Spark. It’s available in CRAN and works like any other CRAN package, meaning that it’s agnostic to Spark versions, it’s easy to install, it serves the R community, it embraces other packages and practices from the R community, and so on. 
+
+[Book to master Spark with R.](https://therinspark.com/starting.html#overview) 
+
+## Installation
+
+From R, getting started with Spark using sparklyr and a local cluster is as easy as installing and loading the sparklyr package followed by installing Spark using sparklyr.
+
+The tools you’ll use are mostly divided into R code and the Spark web interface. All Spark operations are run from R; however, monitoring execution of distributed operations is performed from Spark’s web interface, which you can load from any web browser. 
 
 
-### Load Data into SparklyR.
+Additionally, because Spark is built in the Scala programming language, which is run by the Java Virtual Machine (JVM), you also need to install Java 8 on your system. It is likely that your system already has Java installed, but you should still check the version.
+
+```{r}
+system("java -version")
+```
+
+#### Install sparklyr
 
 ```{r}
 #install.packages("sparklyr")
-library(sparklyr)
-spark_available_versions()
-spark_install(version = "2.1")
+packageVersion("sparklyr")
 ```
 
+#### Install Spark
+
+You can easily install Spark by running spark_install(). This downloads, installs, and configures the latest version of Spark locally on your computer; however, because we’ve written this tutorial with Spark 2.3, you should also install this version to make sure that you can follow all the examples provided without any surprises:
+
+```{r message=FALSE,warning=FALSE}
+library(sparklyr)
+spark_available_versions()
+#spark_install("2.3")
+spark_installed_versions()
+#spark_uninstall(version = "3.1.1", hadoop = "3.2")
+
+```
+
+### Getiing started
+
+#### Connecting
+
+It’s important to mention that, so far, we’ve installed only a local Spark cluster. A local cluster is really helpful to get started, test code, and troubleshoot with ease. 
+
+```{r}
+sc <- spark_connect(master = "local", version = "2.3")
+```
+
+After a connection is established, spark_connect() retrieves an active Spark connection, which most code usually names sc; you will then make use of sc to execute Spark commands.
+
+#### Using Spark
+
+Now that you are connected, we can run a few simple commands. For instance, let’s start by copying the mtcars dataset into Apache Spark by using copy_to():
+
+```{r}
+cars <- copy_to(sc, mtcars)
+```
+
+```{r}
+cars
+```
+
+
 ```{r, message=FALSE, warning=FALSE}
-library(dplyr)
-sc <- spark_connect(master = "local")
+#read in csv file
 taxi_tbl <- spark_read_csv(sc, 
                            name = "taxi_data",
                            path ="/stornext/Home/data/allstaff/y/you.y/MAST30034_R/data/sample.csv", 
                            header = TRUE, delimiter = ",")
 ```
 
-
 ```{r}
+library(dplyr)
 src_tbls(sc)
 ```
 
+Web Interface
 
-
-
-
-
-### dplyr manipulations.
-
-collect() retrieves data into a local tibble.
-
-```{r, message=FALSE, warning=FALSE}
-passenger_summary <- taxi_tbl %>%
-  group_by(passenger_count) %>% 
-  summarise(count = n(), fare = mean(fare_amount), dist = mean(trip_distance)) %>% 
-  filter(count > 200) %>% 
-  collect
+```{r message=FALSE,warning=FALSE}
+# spark_web(sc)
 ```
 
-```{r, message=FALSE, warning=FALSE, fig.width= 6, fig.height= 5}
-library(ggplot2)
-ggplot(passenger_summary) +
-  geom_point(aes(x=fare,y=dist,col=log(count),size=passenger_count)) +
-  theme_bw()
+
+#### Analysis
+
+In general, we usually start by analyzing data in Spark with dplyr, followed by sampling rows and selecting a subset of the available columns. The last step is to collect (collect() retrieves data into a local tibble.) data from Spark to perform further data processing in R, like data visualization. Let’s perform a very simple data analysis example by selecting, sampling, and plotting the cars dataset in Spark:
+
+```{r message=FALSE,warning=FALSE}
+library(tidyverse)
+select(cars, hp, mpg) %>%
+  sample_n(100) %>%
+  collect() %>%
+  plot()
 ```
 
-### Machine Learning
+#### Reading and writing data.
 
-You can orchestrate machine learning algorithms in a Spark cluster via the machine learning functions within sparklyr. These functions connect to a set of high-level APIs built on top of DataFrames that help you create and tune machine learning workflows.
+```{r}
+spark_write_csv(cars, "cars.csv")
+cars <- spark_read_csv(sc, "cars.csv")
+```
 
-Here’s an example where we use ml_linear_regression to fit a linear regression model.
+#### Extensions.
+
+For instance, the sparkly.nested extension is an R package that extends sparklyr to help you manage values that contain nested information.
+
+```{r}
+#install.packages("sparklyr.nested")
+sparklyr.nested::sdf_nest(cars, hp) %>%
+  group_by(cyl) %>%
+  summarise(data = collect_list(data))
+```
+
+Distributed R.
+
+For those few cases when a particular functionality is not available in Spark and no extension has been developed, you can consider distributing your own R code across the Spark cluster. 
+
+```{r}
+#cars %>% spark_apply(~round(.x))
+```
+
+#### Streaming 
+
+While processing large static datasets is the most typical use case for Spark, processing dynamic datasets in real time is also possible and, for some applications, a requirement. You can think of a streaming dataset as a static data source with new data arriving continuously, like stock market quotes. Streaming data is usually read from Kafka (an open source stream-processing software platform) or from distributed storage that receives new data continuously.
+
+```{r}
+dir.create("input")
+write.csv(mtcars, "input/cars_1.csv", row.names = F)
+```
+
+Then, we define a stream that processes incoming data from the input/ folder, performs a custom transformation in R, and pushes the output into an output/ folder:
+
+```{r}
+#stream <- stream_read_csv(sc, "input/") %>%
+    #select(mpg, cyl, disp) %>%
+    #stream_write_csv("output/")
+
+#stream_stop(stream)
+```
+
+#### Logs
+
+A log is just a text file to which Spark appends information relevant to the execution of tasks in the cluster. For local clusters, we can retrieve all the recent logs by running the following:
+
+```{r}
+spark_log(sc)
+```
+
+Or, we can retrieve specific log entries containing, say, sparklyr, by using the filter parameter, as follows:
 
 
 ```{r}
-fit <- taxi_tbl %>%
-  ml_linear_regression(total_amount ~ tip_amount + passenger_count)
+spark_log(sc, filter = "sparklyr")
 ```
 
-For linear regression models produced by Spark, we can use summary() to learn a bit more about the quality of our fit, and the statistical significance of each of our predictors.
+
+#### Disconnecting 
 
 ```{r}
-summary(fit)
+spark_disconnect(sc)
 ```
 
-Here’s a simple example that wraps a Spark text file line counting function with an R function:
+Notice that exiting R, or RStudio, or restarting your R session, also causes the Spark connection to terminate, which in turn terminates the Spark cluster and cached data that is not explicitly saved.
+
+
+#### SessionInfo
 
 ```{r}
-# define an R interface to Spark line counting
-count_lines <- function(sc, path) {
-  spark_context(sc) %>%
-    invoke("textFile", path, 1L) %>%
-      invoke("count")
-}
-
-# call spark to count the lines of the CSV
-count_lines(sc, "/stornext/Home/data/allstaff/y/you.y/MAST30034_R/data/sample.csv")
+sessionInfo()
 ```
 
 
