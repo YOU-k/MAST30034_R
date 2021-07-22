@@ -46,9 +46,9 @@ You can easily install Spark by running spark_install(). This downloads, install
 ```{r message=FALSE,warning=FALSE}
 library(sparklyr)
 spark_available_versions()
-#spark_install("2.3")
+spark_install("3.1")   #you need to run this.
 spark_installed_versions()
-#spark_uninstall(version = "3.1.1", hadoop = "3.2")
+#spark_uninstall(version = "2.3.3", hadoop = "2.7")
 
 ```
 
@@ -59,7 +59,7 @@ spark_installed_versions()
 It’s important to mention that, so far, we’ve installed only a local Spark cluster. A local cluster is really helpful to get started, test code, and troubleshoot with ease. 
 
 ```{r}
-sc <- spark_connect(master = "local", version = "2.3")
+sc <- spark_connect(master = "local", version = "3.1")
 ```
 
 After a connection is established, spark_connect() retrieves an active Spark connection, which most code usually names sc; you will then make use of sc to execute Spark commands.
@@ -81,7 +81,7 @@ cars
 #read in csv file
 taxi_tbl <- spark_read_csv(sc, 
                            name = "taxi_data",
-                           path ="/stornext/Home/data/allstaff/y/you.y/MAST30034_R/data/sample.csv", 
+                           path ="../data/sample.csv", 
                            header = TRUE, delimiter = ",")
 ```
 
@@ -93,7 +93,7 @@ src_tbls(sc)
 Web Interface
 
 ```{r message=FALSE,warning=FALSE}
-# spark_web(sc)
+#spark_web(sc)
 ```
 
 
@@ -112,8 +112,8 @@ select(cars, hp, mpg) %>%
 #### Reading and writing data.
 
 ```{r}
-spark_write_csv(cars, "cars.csv")
-cars <- spark_read_csv(sc, "cars.csv")
+#spark_write_csv(cars, "cars.csv")
+#cars <- spark_read_csv(sc, "cars.csv")
 ```
 
 #### Extensions.
@@ -140,8 +140,8 @@ For those few cases when a particular functionality is not available in Spark an
 While processing large static datasets is the most typical use case for Spark, processing dynamic datasets in real time is also possible and, for some applications, a requirement. You can think of a streaming dataset as a static data source with new data arriving continuously, like stock market quotes. Streaming data is usually read from Kafka (an open source stream-processing software platform) or from distributed storage that receives new data continuously.
 
 ```{r}
-dir.create("input")
-write.csv(mtcars, "input/cars_1.csv", row.names = F)
+#dir.create("input")
+#write.csv(mtcars, "input/cars_1.csv", row.names = F)
 ```
 
 Then, we define a stream that processes incoming data from the input/ folder, performs a custom transformation in R, and pushes the output into an output/ folder:

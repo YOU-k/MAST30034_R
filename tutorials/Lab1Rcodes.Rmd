@@ -52,7 +52,7 @@ Your teaching staff will be as follows:
 ### First Half
 Using the Rstudio server:
 
-* [server link](https://rstudio.mast30034.science.unimelb.edu.au)
+* https://rstudio.mast30034.science.unimelb.edu.au/
 
 * Write in R markdown. [Cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf)
 
@@ -89,7 +89,7 @@ On mac:
 * shift + enter : Run current cell (equivalent of pressing )
 
 ### Using git on the VM
-https://mast30034.science.unimelb.edu.au/
+https://rstudio.mast30034.science.unimelb.edu.au/
 
 #### Cloning:
 
@@ -180,7 +180,12 @@ library(tmaptools)
 ### Read in the data
 
 ```{r}
-df = read.csv("/Volumes/you.y/MAST30034_R/data/sample.csv",stringsAsFactors = TRUE)
+getwd()
+```
+
+
+```{r}
+df = read.csv("../data/sample.csv",stringsAsFactors = TRUE)
 head(df)
 ```
 
@@ -427,7 +432,7 @@ Feather:
 
 ```{r}
 library(feather)
-filepath <- "/Volumes/you.y/MAST30034_R/data/"
+filepath <- "../data/"
 ```
 
 
@@ -459,7 +464,7 @@ df <- read_feather(paste0(filepath,"df.feather"))
 
 ```{r}
 URL <- "https://github.com/YOU-k/MAST30034_R/tree/main/data/sample.csv"
-destfile ="/Volumes/you.y/MAST30034_R/data/download.csv"
+destfile ="../data/download.csv"
 download.file(URL, destfile)
 ```
 
