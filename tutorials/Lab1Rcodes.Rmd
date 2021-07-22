@@ -50,18 +50,21 @@ Your teaching staff will be as follows:
 
 ## Lab 1 Overview
 ### First Half
-Using the Rstudio (JupyterHub) server:
-(TBA)
+Using the Rstudio server:
+
+* [server link](https://rstudio.mast30034.science.unimelb.edu.au)
+
+* Write in R markdown. [Cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf)
 
 Using GitHub Desktop vs Git CLI (Command Line Interface):
 
-* Create a repository for your Project 1, push a commit, and ensure your repository accepts the changes.
+* Create a repository for your Project 1, push a commit, and ensure your repository accepts the changes. [Click me for more information.](https://docs.github.com/en/get-started/quickstart/create-a-repo)
 
 Project 1 Tips:
 
-* How to get started and what to look out for.
+* How to get started and what to look out for. [Click me](https://www.overleaf.com/project/60a724b1bdf4555dc474d537)
 
-* Getting started on Latex with Overleaf.
+* Getting started on Latex with Overleaf. [Overleaf tutorial](https://www.overleaf.com/learn/latex/Tutorials)
 
 ### Second Half
 Revision:
@@ -72,7 +75,7 @@ Revision:
 
 * dplyr verbs in action.
 
-* Plotting geospatial maps the correct way.
+* Plotting geospatial maps.
 
 * Downloading files using urllib.
 
@@ -105,6 +108,7 @@ https://mast30034.science.unimelb.edu.au/
 * git add . (this will add all files in the current directory to a commit - you can specify specific files if you would like instead).
 
 * git commit -m "message" (make a commit with a message).
+
 * git push
 
 Enter your credentials.
@@ -112,6 +116,7 @@ Enter your credentials.
 Done.
 
 ### Readable Code
+
 * We will be assessing the quality of your code and how you present it in your notebooks.
 
 * This is because there is no point writing code that cannot be easily interpreted. At the end of the day, clients are paying for your analysis, but also the corresponding code.
@@ -119,6 +124,7 @@ Done.
 * If your code is confusing or difficult to read, there is little chance your client will come back to you.
 
 #### Variable Names
+
 As long as you are consistent, then it is fine. For example, commit to either using:
 
 * Snake Case: words are seperated by underscores such as variable_name
@@ -128,8 +134,8 @@ As long as you are consistent, then it is fine. For example, commit to either us
 Your variables should be contextual and describe the code. That is, try to name your variables to be understandable without comments.
 
 
-#### Comments and Docstrings (w.r.t JupyterNotebook Cells) (TBA)
-Cells in Jupyter Notebook should aim to do one "block of logic" at a time (i.e importing libraries, defining functions, filtering rows, etc).
+#### Comments and Docstrings
+Cells in R markdown should aim to do one "block of logic" at a time (i.e importing libraries, defining functions, filtering rows, etc).
 
 * If it takes a reader more than a few seconds to understand your cell, you need comments.
 
@@ -147,7 +153,6 @@ Install t-map package (Library for thematic maps) and other required R packages
 #install.packages("dplyr")
 #install.packages("sf")
 #install.packages("curl")
-#Restart your R Session
 #install.packages("tmap")
 ```
 
@@ -155,8 +160,7 @@ Install ggmap
 ```{r}
 #install.packages("ggmap")
 
-#OR (choose whichever works on your computer)
-
+#OR 
 #install.packages("devtools")
 #devtools::install_github("dkahle/ggmap")
 ```
@@ -189,7 +193,6 @@ Check the dimensions of the dataset.
 dim(df)
 ```
 
-
 ```{r}
 colnames(df)
 ```
@@ -206,6 +209,7 @@ str(df)
 ```{r}
 summary(df[,c('pickup_latitude', 'pickup_longitude')])
 ```
+
 ```{r}
 which(is.na(df['pickup_longitude']))
 ```
@@ -225,7 +229,8 @@ Example:
 ```{r}
 head(select(df, VendorID, trip_distance))
 ```
-Now in this case, we will pipe the msleep data frame to the function that will select two columns and then pipe the new data frame to the function head() which will return the head of the new data frame.
+
+Now in this case, we will pipe the data frame to the function that will select two columns and then pipe the new data frame to the function head() which will return the head of the new data frame.
 
 ```{r}
 df %>% 
@@ -246,6 +251,7 @@ df %>%
   select(trip_distance, pickup_longitude,pickup_latitude) %>% 
   head
 ```
+
 ```{r}
 df %>% 
   filter(VendorID == 1 & passenger_count > 0) %>% 
@@ -296,6 +302,8 @@ df %>%
             avg_lati = mean(pickup_latitude)) 
 ```
 
+(Cheat sheet available!!) [https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf]
+
 ### Download and view map
 
 #### ggmap
@@ -315,7 +323,7 @@ ggmap(usmap)
 ```
 
 
-The geocode_OSM() geocodes a location (based on a search query) to coordinates and a bounding box. Similar to geocode from the ggmap package. It uses OpenStreetMap Nominatim. 
+The geocode_OSM() geocodes a location (based on a search query) to coordinates and a bounding box. Similar to geocode from the ggmap package. It uses [OpenStreetMap Nominatim](https://nominatim.openstreetmap.org/ui/search.html).
 
 
 ```{r, message=FALSE,warning=FALSE,fig.height = 10, fig.width =8, fig.align = "center"}
@@ -398,7 +406,7 @@ As a suggestion, have less description and more analysis. Your visualisation sho
 
 We have a simple visualisation on the pickups and dropoffs, but how might they be affected?
 
-* Perhaps we can take a look at the time, day of week, the weather conditions, events that are taking place, etc.
+* Perhaps we can take a look at the time, day of week, the [weather conditions](https://en.wikipedia.org/wiki/METAR#Example_METAR_codes), events that are taking place, etc.
 It is up to you to find an external dataset to answer these questions.
 
 

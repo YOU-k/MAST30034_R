@@ -17,6 +17,8 @@ Officially, sparklyr is an R interface for Apache Spark. It’s available in CRA
 
 [Book to master Spark with R.](https://therinspark.com/starting.html#overview) 
 
+[Cheat sheet available!!](https://ugoproto.github.io/ugo_r_doc/pdf/sparklyr.pdf)
+
 ## Installation
 
 From R, getting started with Spark using sparklyr and a local cluster is as easy as installing and loading the sparklyr package followed by installing Spark using sparklyr.
