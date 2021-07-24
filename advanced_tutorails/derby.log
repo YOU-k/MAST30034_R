@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Sat Jul 24 10:20:48 UTC 2021:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-017a-d808-1e01-000075327ef0 
+on database directory memory:/mnt/unimelb.edu.au/yyyou1/MAST30034_R/tutorials/databaseName=metastore_db with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@67424e82 
+Loaded from file:/mnt/unimelb.edu.au/yyyou1/spark/spark-3.1.1-bin-hadoop3.2/jars/derby-10.12.1.1.jar
+java.vendor=Ubuntu
+java.runtime.version=11.0.11+9-Ubuntu-0ubuntu2.20.04
+user.dir=/mnt/unimelb.edu.au/yyyou1/MAST30034_R/tutorials
+os.name=Linux
+os.arch=amd64
+os.version=5.4.0-77-generic
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

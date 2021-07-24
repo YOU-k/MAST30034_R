@@ -38,8 +38,7 @@ The first few tutorials will have content, with the remainder of the semester tr
     
 3. Regression and Discussion:
     - Linear Regression
-    - AIC vs MSE vs R-Squared
-    - Stepwise Selection (backwards and forward using AIC)
+    - MSE vs R-Squared
     - Penalized Regression (LASSO and Ridge)
     - Generalized Linear Model example (Poisson for count data)
     - Advanced: `sparklyr` modeling
@@ -62,13 +61,13 @@ The first few tutorials will have content, with the remainder of the semester tr
 
 ## R Libraries Covered
 Statistical Modeling / Machine Learning:
-- `sklearn`, `statsmodels`
+- `glmnet`
 
 Data Engineering / End-to-End Pipelines:
-- `Pandas`, `PySpark`, `NumPy`, `GeoPandas`, `papermill`, `re (regex)`
+- `dplyr`, `sparklyr`
 
 Visualizations:
-- `Plotly`, `Folium`, `Bokeh`, `seaborn`, `matplotlib`
+- `ggplot2`, `pheatmap`,`corrplot`, `ggmap`, `tmap`, `leaflet`
 
 
 
