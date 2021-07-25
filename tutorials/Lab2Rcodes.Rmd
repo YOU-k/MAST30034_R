@@ -223,8 +223,8 @@ Shapefile Links:
 ```{r}
 df_yellow = read.csv("../data/yellow_tripdata_2019-01.csv",stringsAsFactors = TRUE)
 df_yellow %>% 
-  group_by(PULocationID, passenger_count) %>% 
-  summarise(n = sum(passenger_count)) -> df_yellow_summary
+  group_by(PULocationID, payment_type) %>% 
+  summarise(n = n()) -> df_yellow_summary
 ```
 
 ```{r}
@@ -274,47 +274,21 @@ tmap is specifically designed to make creation of thematic maps more convenient.
 tm_shape(sf)+
    tm_polygons("Shape_Area",style="quantile")
 ```
-
-#### Web mapping with leaflet
-
+Incorporate information we have to the simple feature collection.
 
 ```{r}
-library(leaflet) 
-```
-
-
-Incorporate the information we have.
-
-```{r}
-df_yellow_summary$LocationID <- df_yellow_summary$PULocationID
-full_join(sf,df_yellow_summary,by="LocationID") -> sf_full
-```
-
-While tmap was tolerant about our AEA projection of philly_crimes_sf, leaflet does require us to explicitly reproject the sf object.
-
-
-```{r message=FALSE, warning=FALSE, fig.align = "center"}
-# reproject
-sf_WGS84 <- st_transform(sf_full, 4326)
-leaflet(sf_WGS84) %>%
-  addPolygons()
+sf_join <- 
+left_join(sf,df_yellow_summary,
+          by=c("LocationID"="PULocationID")) 
 ```
 
 ```{r message=FALSE, warning=FALSE, fig.align = "center"}
-sf_WGS84 %>% filter(!is.na(n)) ->sf_plot
-pal_fun <- colorQuantile("YlOrRd", NULL, n = 5)
-p_popup <- paste0("<strong>Passanger number: </strong>", sf_plot$n)
-leaflet(sf_plot) %>%
-  addPolygons(
-    stroke = FALSE, 
-    fillColor = ~pal_fun(n),
-    fillOpacity = 0.8, smoothFactor = 0.5,
-    popup = p_popup) %>%
-  addTiles() %>%
-  addLegend("bottomright",  # location
-            pal=pal_fun,    # palette function
-            values=~n,  # value to be passed to palette function
-            title = 'Passanger number') # legend title
+tm_shape(sf_join)+
+   tm_polygons("payment_type",style="cat")
+```
+```{r}
+tmap_mode("view")
+tmap_last()
 ```
 
 Read more about [Reprojecting geographic data](https://geocompr.robinlovelace.net/reproj-geo-data.html).

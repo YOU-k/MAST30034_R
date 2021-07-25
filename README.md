@@ -67,7 +67,7 @@ Data Engineering / End-to-End Pipelines:
 - `dplyr`, `sparklyr`
 
 Visualizations:
-- `ggplot2`, `pheatmap`,`corrplot`, `ggmap`, `tmap`, `leaflet`
+- `ggplot2`, `pheatmap`,`corrplot`, `ggmap`, `tmap`
 
 
 
