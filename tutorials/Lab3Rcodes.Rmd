@@ -282,6 +282,7 @@ sessionInfo()
 ```{r}
 summary(glm_fit)
 ```
+
 * We can see that both total_amount and trip_distance are insignificant.
 
 * Conclude that the total fare amount and trip distance do not really affect the number of passengers in a trip.
@@ -290,51 +291,50 @@ summary(glm_fit)
 
 ### Discussion
 
-* What is the Bias-Variance tradeoff with respect to linear models:
+1. What is the Bias-Variance trade-off with respect to linear models:
 
-1. Less parameters = less variance but more bias
+* Less parameters = less variance but more bias
 
-2. More parameters = more variaance but less bias
+* More parameters = more variance but less bias
 
-3. The goal depends on the problem, but generalled we want an even variaance and bias (intersection).
+* The goal depends on the problem, but generally we want an even variance and bias (intersection).
 
-* Is using regression on X attribute / specific dataset even a good choice...?
 
-1. The answer is yes, it is a good choice to try
+2. What are the pros and cons of stepwise regression?
 
-2. BUT also try other methods...
+* Forward Selection (start from nothing and end until significant)
 
-* What are the pros and cons of stepwise regression?
+* Backward Elimination (start with everything and end until no more can be removed)
 
-1. Forward Selection (start from nothing and end until significant)
+* Not always the best results...
 
-2. Backward Elimination (start with everything and end until no more can be removed)
+3. What is best subset regression and the pros and cons of it?
 
-3. Not always the best results...
+* A brute-force like method of fitting all possible regressions or all possible models
 
-* What is best subset regression and the pros and cons of it?
+* Unlike stepwise, this method fits all possible models based on the variables specified, so you will get the best model possible test.
 
-1. A brute-force like method of fitting all posssible regressuibs or all possible models
+4. What is an assumption we make when we fit linear regression models?
 
-2. Unlike stepwise, this method fits all possible models based on the variables specified, so you will get the best model possibletest
+* Well, the data has to be linearly separable.
 
-* What is an assumption we make when we fit linear regression models?
+* Does this also apply to other models too...? (Recall SVM and kernel function which we can use)
 
-1. Well, the data has to be linearly seperable.
+* Perhaps another model might suit the dataset... (Trees, Neural Networks, Clustering, etc...)
 
-2. Does this also apply to other models too...? (Recall SVM and kernel function which we can use)
+5. If you were to use a decision tree, how would you compare between two different fits?
 
-3. Perhaps another model might suit the dataset... (Trees, Neural Networks, Clustering, etc...)
-
-* If you were to use a decision tree, how would you compare between two different fits?
-
-1. Look at Gini Impurity (probability of an incorrectly classified instance)
-
-2. How about baselines or other predictive machine learning models?
+* Look at Gini Impurity (probability of an incorrectly classified instance)
  
-3. Precision, Recall, Classification Accuracy...
+* Precision, Recall, Classification Accuracy...
+
+```{r echo=FALSE, out.width='50%'}
+knitr::include_graphics('plots/precision_recall.png')
+```
 
 #### Feature Engineering?
+
+(Example report)
 
 * We want to see if the the profitability of zones remains consistent with respect to hour of day, day of week and pickup location. The distribution of profitable zones should be similar across all years.
 
@@ -345,8 +345,6 @@ summary(glm_fit)
 * Just remember that trip frequency $\approx$ taxi demand in a zone (you don't know the number of taxis in a zone at the time)
 
 * Additionally, variable rate fares exist: "50 cents per 1/5 mile when travelling above 12mph OR 50 cents per 60 seconds in slow traffic or when the vehicle is stopped."
-
-* Profit rates might assume crude approximations degrading into linear distance / constant velocity / etc
 
 
 

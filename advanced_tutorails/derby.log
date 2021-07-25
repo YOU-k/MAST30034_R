@@ -1,13 +1,13 @@
 ----------------------------------------------------------------
-Sat Jul 24 10:20:48 UTC 2021:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-017a-d808-1e01-000075327ef0 
-on database directory memory:/mnt/unimelb.edu.au/yyyou1/MAST30034_R/tutorials/databaseName=metastore_db with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@67424e82 
-Loaded from file:/mnt/unimelb.edu.au/yyyou1/spark/spark-3.1.1-bin-hadoop3.2/jars/derby-10.12.1.1.jar
-java.vendor=Ubuntu
-java.runtime.version=11.0.11+9-Ubuntu-0ubuntu2.20.04
-user.dir=/mnt/unimelb.edu.au/yyyou1/MAST30034_R/tutorials
+Sun Jul 25 17:04:55 AEST 2021:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-017a-dc7b-22bc-000050b10078 
+on database directory memory:/stornext/Home/data/allstaff/y/you.y/MAST30034_R/advanced_tutorails/databaseName=metastore_db with class loader org.apache.spark.sql.hive.client.IsolatedClientLoader$$anon$1@1a9f45eb 
+Loaded from file:/stornext/Home/data/allstaff/y/you.y/spark/spark-2.3.3-bin-hadoop2.7/jars/derby-10.12.1.1.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_262-b10
+user.dir=/stornext/Home/data/allstaff/y/you.y/MAST30034_R/advanced_tutorails
 os.name=Linux
 os.arch=amd64
-os.version=5.4.0-77-generic
+os.version=3.10.0-957.5.1.el7.x86_64
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''

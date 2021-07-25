@@ -1,0 +1,59 @@
+---
+title: "Lab4 tutorial"
+date: "`r Sys.Date()`"
+author: Yue You
+output:
+  rmdformats::html_clean:
+    self_contained: true
+    thumbnails: true
+    lightbox: true
+    gallery: false
+    highlight: tango
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Lab 4 Overview
+
+### First Half
+
+Machine Learning packages in R.
+
+### Second Half
+
+Machine Learning Discussion.
+What to expect for Project 2.
+
+
+### Machine learning in R.
+
+Detailed [online material](https://lgatto.github.io/IntroMachineLearningWithR/index.html#caution). 
+
+Systematic summary in [scikit-learn (python package)](https://scikit-learn.org/stable/) .
+
+```{r echo=FALSE, out.width='100%'}
+knitr::include_graphics('plots/ml_map.png')
+```
+
+#### Discussion
+
+https://homes.cs.washington.edu/~pedrod/papers/cacm12.pdf
+
+* Generalize the model (train dataset will almost never be the same as "test" dataset, let alone real world test data)
+
+```{r echo=FALSE, out.width='50%'}
+knitr::include_graphics('plots/biasVVariance.png')
+```
+
+* There is never enough data
+
+* Overfitting
+
+* Curse of dimensionality
+
+* Feature Engineering is Key
+
+* Correlation does not imply causation

@@ -1,5 +1,5 @@
 ---
-title: "sparklyr Tutorial"
+title: "sparklyr analysis"
 date: "`r Sys.Date()`"
 author: Yue You
 output:
@@ -13,11 +13,38 @@ output:
 
 This tutorial introduces tools and concepts to perform data analysis in Spark from R. Spoiler alert: these are the same tools you use with plain R! This is not a mere coincidence; rather, we want data scientists to live in a world where technology is hidden from them, where you can use the R packages you know and love, and they “just work” in Spark! Now, we are not quite there yet, but we are also not that far. Therefore, in this tutorial you learn widely used R packages and practices to perform data analysis—dplyr, ggplot2, formulas, rmarkdown, and so on—which also happen to work in Spark.
 
-[Book to master Spark with R.](https://therinspark.com/starting.html#overview) 
+Based on [online material](https://therinspark.com/analysis.html).
 
-### dplyr manipulations.
 
-```{r, message=FALSE, warning=FALSE}
+
+```{r message=FALSE,warning=FALSE}
+library(sparklyr)
+library(dplyr)
+sc <- spark_connect(master = "local", version = "2.3")
+```
+
+### Import 
+
+Import the data.
+```{r message=FALSE,warning=FALSE}
+taxi_tbl <- spark_read_csv(sc, 
+                           name = "taxi_data",
+                           path ="../data/sample.csv", 
+                           header = TRUE, delimiter = ",")
+```
+ 
+ 
+### Wrangle 
+
+Data wrangling uses transformations to understand the data. It is often referred to as the process of transforming data from one “raw” data form into another format with the intent of making it more appropriate for data analysis.
+
+```{r message=FALSE,warning=FALSE}
+summarize_all(taxi_tbl, mean)
+```
+
+Most of the data transformation operations made available by dplyr to work with local DataFrames are also available to use with a Spark connection.
+
+```{r message=FALSE,warning=FALSE}
 passenger_summary <- taxi_tbl %>%
   group_by(passenger_count) %>% 
   summarise(count = n(), fare = mean(fare_amount), dist = mean(trip_distance)) %>% 
@@ -25,12 +52,41 @@ passenger_summary <- taxi_tbl %>%
   collect
 ```
 
-```{r, message=FALSE, warning=FALSE, fig.width= 6, fig.height= 5}
+
+```{r}
 library(ggplot2)
 ggplot(passenger_summary) +
   geom_point(aes(x=fare,y=dist,col=log(count),size=passenger_count)) +
   theme_bw()
 ```
+
+### Correlations
+
+```{r message=FALSE,warning=FALSE}
+ml_corr(taxi_tbl %>% 
+          select(total_amount,trip_distance,fare_amount))
+```
+
+
+```{r message=FALSE,warning=FALSE}
+#install.packages("corrr")
+library(corrr)
+correlate(taxi_tbl %>% 
+          select(total_amount,trip_distance,fare_amount),
+          use = "pairwise.complete.obs", method = "pearson") 
+```
+
+We can pipe the results to other corrr functions. For example, the shave() function turns all of the duplicated results into NAs. Again, while this feels like standard R code using existing R packages, Spark is being used under the hood to perform the correlation.
+
+```{r message=FALSE,warning=FALSE}
+correlate(taxi_tbl %>% 
+          select(total_amount,trip_distance,fare_amount,tip_amount), 
+          use = "pairwise.complete.obs", method = "pearson") %>%
+  shave() %>%
+  rplot()
+```
+
+
 
 ### Machine Learning
 
@@ -50,18 +106,8 @@ For linear regression models produced by Spark, we can use summary() to learn a 
 summary(fit)
 ```
 
-Here’s a simple example that wraps a Spark text file line counting function with an R function:
 
-```{r}
-# define an R interface to Spark line counting
-count_lines <- function(sc, path) {
-  spark_context(sc) %>%
-    invoke("textFile", path, 1L) %>%
-      invoke("count")
-}
 
-# call spark to count the lines of the CSV
-count_lines(sc, "/stornext/Home/data/allstaff/y/you.y/MAST30034_R/data/sample.csv")
-```
+
 
 
