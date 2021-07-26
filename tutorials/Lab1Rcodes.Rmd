@@ -401,8 +401,6 @@ ggmap(map_big) +
 
 * Why might there be more pickups around central Manhattan?
 
-* Is there an explanation surrounding the "hubs"?
-
 * Why are dropoffs scattered across the map?
 
 As a suggestion, have less description and more analysis. Your visualisation should ensure that it can be easily interpreted and visible (i.e suitable font size, colour, alpha, legend, etc.)
