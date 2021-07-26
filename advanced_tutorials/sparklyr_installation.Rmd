@@ -26,7 +26,7 @@ From R, getting started with Spark using sparklyr and a local cluster is as easy
 The tools you’ll use are mostly divided into R code and the Spark web interface. All Spark operations are run from R; however, monitoring execution of distributed operations is performed from Spark’s web interface, which you can load from any web browser. 
 
 
-Additionally, because Spark is built in the Scala programming language, which is run by the Java Virtual Machine (JVM), you also need to install Java 8 on your system. It is likely that your system already has Java installed, but you should still check the version.
+Additionally, because Spark is built in the Scala programming language, which is run by the Java Virtual Machine (JVM), you also need to install Java on your system. It is likely that your system already has Java installed, but you should still check the version.
 
 ```{r}
 system("java -version")
@@ -41,7 +41,7 @@ packageVersion("sparklyr")
 
 #### Install Spark
 
-You can easily install Spark by running spark_install(). This downloads, installs, and configures the latest version of Spark locally on your computer; however, because we’ve written this tutorial with Spark 2.3, you should also install this version to make sure that you can follow all the examples provided without any surprises:
+You can easily install Spark by running spark_install(). This downloads, installs, and configures the latest version of Spark locally on your computer; however, because we’ve written this tutorial with Spark 3.1, you should also install this version to make sure that you can follow all the examples provided without any surprises:
 
 ```{r message=FALSE,warning=FALSE}
 library(sparklyr)
