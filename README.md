@@ -1,7 +1,7 @@
 # Welcome to the MAST30034 R Repo
 - Author: [Yue You](https://github.com/YOU-k)
 - Tutorial Up-to-Date as of: 2021  
-- Usage: For MAST30034 students only  
+- Usage: For MAST30034 students only ...
 
 This repository will house all R workshops.
 
