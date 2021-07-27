@@ -50,6 +50,14 @@ Your teaching staff will be as follows:
 
 ## Lab 1 Overview
 ### First Half
+
+Project 1 Tips:
+
+* How to get started and what to look out for. [Click me](https://www.overleaf.com/project/60a724b1bdf4555dc474d537)
+
+* Getting started on Latex with Overleaf. [Overleaf tutorial](https://www.overleaf.com/learn/latex/Tutorials)
+
+
 Using the Rstudio server:
 
 * https://rstudio.mast30034.science.unimelb.edu.au/
@@ -60,13 +68,8 @@ Using GitHub Desktop vs Git CLI (Command Line Interface):
 
 * Create a repository for your Project 1, push a commit, and ensure your repository accepts the changes. [Click me for more information.](https://docs.github.com/en/get-started/quickstart/create-a-repo)
 
-Project 1 Tips:
-
-* How to get started and what to look out for. [Click me](https://www.overleaf.com/project/60a724b1bdf4555dc474d537)
-
-* Getting started on Latex with Overleaf. [Overleaf tutorial](https://www.overleaf.com/learn/latex/Tutorials)
-
 ### Second Half
+
 Revision:
 
 * Variable names and types. 
@@ -79,14 +82,6 @@ Revision:
 
 * Downloading files using urllib.
 
-
-## General Tips for R markdown
-
-On mac:
-
-* Ctrl + option + i : Insert code chunk {r}
-* Cmd + Shift + c : Comment out lines #
-* shift + enter : Run current cell (equivalent of pressing )
 
 ### Using git on the VM
 https://rstudio.mast30034.science.unimelb.edu.au/
@@ -142,6 +137,16 @@ Cells in R markdown should aim to do one "block of logic" at a time (i.e importi
 * Your functions need to have docstrings describing what they do.
 
 ## Let's get started!
+
+
+### General Tips for R markdown
+
+On mac:
+
+* Ctrl + option + i : Insert code chunk {r}
+* Cmd + Shift + c : Comment out lines #
+* shift + enter : Run current cell (equivalent of pressing )
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -392,8 +397,6 @@ ggmap(map_big) +
 ### Geospatial Inferences
 
 * More pickups around central Manhattan, with more dropoffs in the surrounding bouroughs.
-
-* Pickup location are easily divided into "hubs" (i.e Manhattan, Aiport, etc).
 
 * Dropoffs seem to be scattered across the map.
 
