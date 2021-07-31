@@ -40,7 +40,7 @@ Revision:
 
 * Any code related questions for R
 
-** Let's get started **
+**Let's get started**
 
 
 ```{r setup, include=FALSE}
@@ -92,7 +92,7 @@ yranges
 
 ```{r, message=FALSE,warning=FALSE, fig.align = "center"}
 map_big <- get_stamenmap(
-  rbind(-74.3,40.45,-73.65,40.95), 
+  rbind(-74.3,40.45,-73.6,40.95), 
   zoom = 10)
 ggmap(map_big)
 ```
@@ -465,6 +465,7 @@ ggplot(df) +
 
 The default setting of position to draw two histgrams together is by stacking them instead of their identity.
 
+Plot the information of payment type and trip distance together in one.
 
 ```{r message=FALSE, warning=FALSE, fig.align = "center",fig.height=6,fig.width=10}
 ggplot(df) +
