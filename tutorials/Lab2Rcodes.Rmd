@@ -75,6 +75,8 @@ It’s hard to succinctly describe how **ggplot2** works because it embodies a d
 library(ggplot2)
 ggplot(df, aes(total_amount, trip_distance, colour = as.factor(payment_type))) + 
   geom_point()
+
+
 ```
 
 In spatial statistics the ability to visualize data and models superimposed with their basic
@@ -239,10 +241,6 @@ A shapefile is a simple, nontopological format for storing the geometric locatio
 [taxi_zones.zip](https://s3.amazonaws.com/nyc-tlc/misc/taxi_zones.zip)
 [taxi+_zone_lookup.csv](https://s3.amazonaws.com/nyc-tlc/misc/taxi+_zone_lookup.csv)
 
-```{r}
-sf = st_read("../data/shapefile/taxi_zones/taxi_zones.shp")
-zone = read.csv("../data/shapefile/taxi+_zone_lookup.csv")
-```
 
 Basic information in shapefile.
 
@@ -285,6 +283,7 @@ tm_shape(sf)+
 Incorporate information we have based on pickup locations to the simple feature collection.
 
 ```{r}
+df_yellow_summary[!duplicated(df_yellow_summary$PULocationID),]-> df_yellow_summary
 sf_join <- 
 left_join(sf,df_yellow_summary,
           by=c("LocationID"="PULocationID")) 
