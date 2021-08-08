@@ -5,7 +5,7 @@
 
 This repository will house all R workshops.
 
-The python stream is available [here] (https://github.com/akirawang/MAST30034_python).
+The python stream is available [here](https://github.com/akirawang/MAST30034_python).
 
 ## Dates and Times 
 

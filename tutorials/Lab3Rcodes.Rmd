@@ -16,11 +16,11 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-## Lab 3 Overview
+### Lab 3 Overview
 
-### First Half
+Reminder that Project 1 is due this Friday.
 
-More Visualisations:
+#### First Half
 
 * Linear Regression.
 
@@ -32,21 +32,21 @@ More Visualisations:
 
 * Discussion.
 
-### Second Half
+#### Second Half
 
 Revision:
 
 * Any code related questions for R
 
-### Let's get started
+**Let's get started**
 
 ### Rregression in R
 
 * Linear Regression.
 
-* General Linear Models (more covered in MAST30027).
-
 * LASSO and Ridge Regression.
+
+* Generalized Linear Models (more covered in MAST30027).
 
 * Non-parametric models as alternatives.
 
@@ -98,8 +98,7 @@ Well, obviously this looks like an overall positive linear relationship.
 We would do something like this for (Ordinary) Least Squares:
 
 ```{r}
-fit <- lm(total_amount ~ fare_amount + tip_amount + tolls_amount + trip_distance + VendorID, 
-          data=df_filtered)
+fit <- lm(total_amount ~ fare_amount + tip_amount + tolls_amount + trip_distance + VendorID, data=df_filtered)
 summary(fit)
 ```
 
@@ -137,6 +136,10 @@ Things you might have forgotten when working with penalized models:
 
 ### LASSO ($\ell_1$)
 
+Solution:
+
+* Requires an iterative method to solve $(\mathbf{y}-X\beta)^T(\mathbf{y}-X\beta) + \lambda I \beta$
+
 Quick overview:
 
 * LASSO may cause coefficients to be set to 0 by constraining the model.
@@ -147,34 +150,29 @@ Quick overview:
 
 * In this sense, it's quite similar to feature selection as you end up with a model that is much more simpler.
 
-* However, LASSO does not do well when the feature space is small as you may end up with an over-simplified model, as well as cases where all the featuers are significant or when coefficients are extremely large.
-
-Solution:
-
-* Requires an iterative method to solve $(\mathbf{y}-X\beta)^T(\mathbf{y}-X\beta) + \lambda I \beta$
+* However, LASSO does not do well when the feature space is small as you may end up with an over-simplified model, as well as cases where all the features are significant or when coefficients are extremely large.
 
 
 ### Ridge ($\ell_2$)
 
-Quick overview:
+Solution:
 
-* Also know as the MAP (Maximum a posteriori) estimation.
+* Closed-form which can be found by minimising $(\mathbf{y}-X\beta)^T(\mathbf{y}-X\beta) + \lambda I \beta^T\beta$
+
+
+Quick overview:
 
 * Aims to lower the scale of the coefficients to avoid overfitting, but does not result in coefficients being 0.
 
-* In contraast to LASSO, we put a constrain using the sum of squares that must be lest than a fixed value.
+* In contrast to LASSO, we put a constrain using the sum of squares that must be less than a fixed value.
 
 * As you might guess, this means we still have several features making it less interpretable than LASSO.
 
 * However, Ridge Regression performs best in cases where there may be high multi-colinearity (i.e dependencies between attributes) or high linear correlation between certain attributes,
 
-* This is because it reduces variance in exchange for some more bias (consider variance-bias tradeoff).
+* This is because it reduces variance in exchange for some more bias (consider variance-bias trade-off).
 
 * You must also ensure that we have more observations than attributes (n > p) as this penalty method does not drop features, leading to worse predictions.
-
-Solution:
-
-* Closed-form which can be found by minimising $(\mathbf{y}-X\beta)^T(\mathbf{y}-X\beta) + \lambda I \beta^T\beta$
 
 
 
@@ -197,8 +195,10 @@ ridge_reg <- glmnet(x = as.matrix(df_filtered[,xcols]),
                     nlambda = 25, alpha = 0, 
                     family = 'gaussian',
                     standardize = TRUE)
-summary(ridge_reg)
+print(ridge_reg)
 ```
+This displays the call that produced the object ridge_reg and a three-column matrix with columns Df (the number of nonzero coefficients), %dev (the percent deviance explained) and Lambda (the corresponding value of $\lambda$). (The digits argument can used to specify significant digits in the printout.)
+From the last few lines of the output, we see the fraction of deviance does not change much and all 25 models are fit. 
 
 Does k-fold cross-validation for glmnet. (k is 10 at default)
 
@@ -212,13 +212,17 @@ optimal_lambda <- cv_ridge$lambda.min
 optimal_lambda
 ```
 
+“lambda.min”: the $\lambda$ at which the smallest MSE is achieved.
+
+“lambda.1se”: the largest $\lambda$ at which the MSE is within one standard error of the smallest MSE (default).
+
 Best lambda value for Ridge: 1.239259
 $\lambda$ is computed by using cross validation (iterative approach).
 
 What about our coefficients?
 
 ```{r}
-coef(cv_ridge)
+coef(cv_ridge,s="lambda.min")
 ```
 Next, let's try lasso regression.
 
@@ -228,6 +232,10 @@ lasso_reg <- cv.glmnet(x =  as.matrix(df_filtered[,xcols]),
                        alpha = 1, standardize = TRUE, nfolds = 5)
 
 plot(lasso_reg)
+print(lasso_reg)
+```
+
+```{r}
 # Best 
 lambda_best <- lasso_reg$lambda.min 
 lambda_best
@@ -241,7 +249,6 @@ What about our coefficients?
 coef(lasso_reg)
 ```
 We see that the lasso model with $\lambda$ chosen by cross-validation contains only four variables. trip_distance and VendorID have shrunk to 0. 
-
 
 
 ### Fitting a GLM (Optional)
@@ -270,13 +277,6 @@ glm_fit <- glm(formula = passenger_count ~ total_amount + trip_distance + Vendor
           data=df, family = poisson(link = "log"))
 ```
 
-
-
-#### SessionInfo
-
-```{r}
-sessionInfo()
-```
 
 
 ```{r}
@@ -308,19 +308,20 @@ summary(glm_fit)
 
 * Not always the best results...
 
+
 3. What is best subset regression and the pros and cons of it?
 
 * A brute-force like method of fitting all possible regressions or all possible models
 
 * Unlike stepwise, this method fits all possible models based on the variables specified, so you will get the best model possible test.
 
+
 4. What is an assumption we make when we fit linear regression models?
 
 * Well, the data has to be linearly separable.
 
-* Does this also apply to other models too...? (Recall SVM and kernel function which we can use)
-
 * Perhaps another model might suit the dataset... (Trees, Neural Networks, Clustering, etc...)
+
 
 5. If you were to use a decision tree, how would you compare between two different fits?
 
